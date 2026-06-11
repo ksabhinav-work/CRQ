@@ -102,7 +102,7 @@
   /* worldview preset bar */
   .presetbar{
     background:var(--panel); border:1.5px solid var(--line); border-radius:4px;
-    padding:14px 16px 13px; margin-top:16px; position:relative; z-index:1;
+    padding:14px 16px 13px; margin:14px 0 2px; position:relative; z-index:1;
   }
   .presetbar .pb-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:11px}
   .presetbar .pb-reset{padding:3px 11px; font-size:12px; border:1px solid var(--line); background:transparent; color:var(--slate)}
@@ -400,7 +400,7 @@
     <div class="mosca"><small>The deterministic version · Mosca's inequality</small>
       If migration time + secrecy lifetime exceeds the time until Q-Day, <b>exposure follows</b>. CRQ is this line with the uncertainty in each term honoured instead of suppressed.
     </div>
-    <svg id="racesvg" viewBox="0 0 690 170" width="100%" style="max-width:690px; margin-top:30px; display:block" role="img" aria-label="The race on one timeline: the Q-Day uncertainty band, the migration window, and the secrecy clock of the first harvest, with the overlap marked as exposure">
+    <svg id="racesvg" viewBox="-32 0 722 170" width="100%" style="max-width:722px; margin-top:30px; display:block" role="img" aria-label="The race on one timeline: the Q-Day uncertainty band, the migration window, and the secrecy clock of the first harvest, with the overlap marked as exposure">
       <line x1="60" y1="38" x2="670" y2="38" stroke="rgba(255,255,255,.14)"/>
       <line x1="60" y1="78" x2="670" y2="78" stroke="rgba(255,255,255,.14)"/>
       <line x1="60" y1="118" x2="670" y2="118" stroke="rgba(255,255,255,.14)"/>
@@ -454,6 +454,18 @@
     <div class="chip">CRQ step 2 · Decomposition and calibrated estimation</div>
     <div class="actlabel"><h2>Four honest ranges</h2></div>
     <p>You cannot estimate "our quantum risk" directly, and CRQ never asks anyone to. The unknowable whole is decomposed into the parts that actually generate the loss, and each part gets a calibrated range: an interval the expert would genuinely bet on, with its anchoring evidence written down.</p>
+    <div class="presetbar">
+      <div class="pb-head">
+        <span class="subhead" style="margin:0">Try a worldview</span>
+        <button class="pb-reset" id="btn-reset">Reset defaults</button>
+      </div>
+      <div class="pb-btns">
+        <button class="pbtn" id="pre-skep">Quantum skeptic</button>
+        <button class="pbtn" id="pre-cons">Consensus</button>
+        <button class="pbtn" id="pre-hawk">Quantum hawk</button>
+      </div>
+      <div class="note">Every input below is editable, and any edit rebuilds every number downstream from your beliefs. Presets load a coherent belief set and re-run the Act 5 comparison immediately; the test is whether the decision survives your worldview.</div>
+    </div>
     <div class="cards">
       <div class="card">
         <div class="tag">When does Q-Day arrive?</div>
@@ -481,18 +493,6 @@
       </div>
     </div>
     <div class="crqnote"><span class="lead">In CRQ terms</span>This is <b>Fermi decomposition</b> plus an <b>assumption register</b>. Note the quality gradient, which is itself method: one input is barely an estimate (corpus data is a database query), one has internal test evidence, one is external expert elicitation, one is honest near-ignorance with the widest interval. A 90% interval is a tested claim, not a feeling: calibration training, a half-day exercise, brings experts to the point where their 90% intervals really do contain the truth about 90% of the time.</div>
-    <div class="presetbar">
-      <div class="pb-head">
-        <span class="subhead" style="margin:0">Try a worldview</span>
-        <button class="pb-reset" id="btn-reset">Reset defaults</button>
-      </div>
-      <div class="pb-btns">
-        <button class="pbtn" id="pre-skep">Quantum skeptic</button>
-        <button class="pbtn" id="pre-cons">Consensus</button>
-        <button class="pbtn" id="pre-hawk">Quantum hawk</button>
-      </div>
-      <div class="note">Every input above is editable, and any edit rebuilds every number downstream from your beliefs. Presets load a coherent belief set and re-run the Act 5 comparison immediately; the test is whether the decision survives your worldview.</div>
-    </div>
   </div>
 </section>
 
