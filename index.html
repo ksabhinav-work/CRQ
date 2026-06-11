@@ -684,7 +684,7 @@
       <div class="opt r">
         <h3>Roadmap 2031</h3>
         <div class="price">Begin in five years, normal pace · Rs. 6 cr from 2031</div>
-        <p>The institutional default: it is on the roadmap, budgeted for later. Five more years of fully harvestable operation, then a multi-year migration racing the bowl.</p>
+        <p>The institutional default: it is on the roadmap, budgeted for later. Five more years of fully harvestable operation, then a multi-year migration racing the Q-Day clock.</p>
       </div>
       <div class="opt n">
         <h3>Start now</h3>
@@ -698,7 +698,7 @@
         Migration must beat Q-Day in at least <input type="number" id="ap-beats" value="95" min="50" max="100" step="1">% of futures, and the 1-in-20 worst future must stay under <input type="number" id="ap-p95" value="1" min="0.05" max="50" step="0.05"> lakh person-records. <span class="note" style="font-size:12px">(Appetite is defined in records, the institution's chosen unit, whatever the display toggle says.)</span>
       </div>
       <label class="moneylab" style="margin-bottom:8px"><input type="checkbox" class="moneycheck" id="mt-5"> Show losses in rupees (cost range is set in Act 4)</label>
-      <div class="note" style="margin-bottom:10px">Self-contained and seeded: this replay runs fresh whether or not the earlier acts were clicked, and produces identical numbers on every machine. Each future's chits are drawn once and handed to all four strategies, so "same bowl" is literal: every future is the identical world, lived four ways.</div>
+      <div class="note" style="margin-bottom:10px">Self-contained and seeded: this replay runs fresh whether or not the earlier acts were clicked, and produces identical numbers on every machine. Each trial draws one world and evaluates all four strategies inside it, so every gap between the curves is the strategy, never sampling luck.</div>
       <div class="btnrow"><button id="btn-compare">Replay 20,000 futures under all four</button></div>
       <div class="note" id="exc-chits" style="margin-bottom:6px"></div>
       <div class="chartwrap">
@@ -1277,7 +1277,7 @@ let excData=null;
 function doCompare(){
   rand = mulberry32(SEED+1);
   excData = runComparison(20000);
-  $("exc-chits").textContent = `Bowls emptied: ${excData._chits.toLocaleString("en-IN")} chits pulled, and each world's chits served all four strategies.`;
+  $("exc-chits").textContent = `20,000 worlds drawn once each (${excData._chits.toLocaleString("en-IN")} input draws in total); every strategy was evaluated on the same draws, so the curves below differ only by strategy.`;
   renderExc(); renderCmp();
 }
 $("btn-compare").addEventListener("click",doCompare);
