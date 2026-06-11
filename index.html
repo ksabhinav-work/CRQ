@@ -239,6 +239,24 @@
     padding:15px 17px; margin:16px 0; font-size:15px; max-width:690px; position:relative; z-index:1;
   }
 
+  .moneylab{
+    display:flex; gap:7px; align-items:center; flex-wrap:wrap;
+    font-family:var(--ui); font-size:13px; color:var(--slate); margin:6px 0 2px;
+  }
+  .moneylab input[type=checkbox]{width:15px; height:15px; accent-color:var(--orange)}
+  .moneylab input[type=number]{padding:3px 6px}
+
+  details.deeper{margin:18px 0 4px; position:relative; z-index:1}
+  details.deeper>summary{
+    cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:9px;
+    font-family:var(--ui); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+    font-weight:700; color:var(--blue); padding:8px 0;
+  }
+  details.deeper>summary::-webkit-details-marker{display:none}
+  details.deeper>summary::before{content:"+"; font-family:var(--disp); font-size:17px; line-height:1; color:var(--orange)}
+  details.deeper[open]>summary::before{content:"–"}
+  details.deeper>summary:hover{color:var(--ink)}
+
   /* ---------- sticky belief strip ---------- */
   .stickybar{
     position:fixed; left:0; right:0; bottom:0; z-index:6;
@@ -381,7 +399,7 @@
     <div class="ghostnum" aria-hidden="true">2</div>
     <div class="chip">CRQ step 2, continued · Estimates become distributions</div>
     <div class="actlabel"><h2>Q-Day becomes a bowl of chits</h2></div>
-    <p>A range is a statement; a distribution is that statement made drawable. Write thousands of chits: many say years near 2037, some say the early 2030s, a few say the 2050s. The bowl now is the expert belief, in physical form, and arguing about the single true year becomes visibly pointless. Draw from it.</p>
+    <p>A range is a statement; a distribution is that statement made drawable. Write thousands of chits: most cluster near the likely year, some say the earliest plausible dates, a few stretch all the way to the latest. The bowl now is the expert belief, in physical form, and arguing about the single true year becomes visibly pointless. Draw from it.</p>
     <div class="panel">
       <div class="bowlrow">
         <div>
@@ -394,7 +412,7 @@
         </div>
         <div class="chartwrap">
           <svg id="bowlchart" viewBox="0 0 560 200" width="100%" role="img" aria-label="Histogram of drawn Q-Day chits"></svg>
-          <div class="note">Each draw drops a dot on the timeline. Keep drawing and the belief takes shape: a hill peaking in the late 2030s with a long tail into the 2050s.</div>
+          <div class="note">Each draw drops a dot on the timeline. Keep drawing and the belief takes shape: a hill peaking at the likely year with a long tail toward the latest.</div>
         </div>
       </div>
     </div>
@@ -436,6 +454,7 @@
         <button class="ghost" id="btn-clear">Clear ledger</button>
         <span class="note">Mass runs are seeded: two machines, same inputs, identical numbers.</span>
       </div>
+      <label class="moneylab"><input type="checkbox" class="moneycheck" id="mt-4"> Show losses in rupees, at Rs. <input type="number" id="in-clo" value="2000" min="100" max="100000" step="100" style="width:78px"> to <input type="number" id="in-chi" value="20000" min="500" max="1000000" step="500" style="width:88px"> per record exposed. The monetisation is one multiplication, and the cost range is the widest, least-evidenced input on the page; which is the argument for the records unit.</label>
       <div class="counters">
         <div class="counter"><div class="v" id="c-years">0</div><div class="k">Futures simulated</div></div>
         <div class="counter"><div class="v accent" id="c-pany">–</div><div class="k">Futures with exposure</div></div>
@@ -456,14 +475,17 @@
     </div>
     <div class="crqnote"><span class="lead">In CRQ terms</span>The pile of trials <b>is the loss distribution</b>. "Futures with exposure" is the loss event probability over the horizon; the orange line is the <b>95th percentile (P95)</b>, the value only 1 future in 20 exceeds; the unit is operational (records) rather than monetary, a legitimate CRQ choice when money is not what the institution actually cares about. The Mosca check below is <b>validation against a hand calculation</b>, the discipline that keeps a model honest.</div>
     <div class="callout" id="envelope" style="display:none"></div>
-    <div class="panel" id="tornpanel">
-      <div class="subhead">Sensitivity · which range is worth refining?</div>
-      <p class="note" style="margin-bottom:4px">Pin one input at its low bound and rerun, then at its high bound and rerun, leaving every other input fully uncertain. The bar spans the resulting P95s for the roadmap plan; the orange line is the all-uncertain base case. The widest bar is where better evidence buys the most.</p>
-      <div class="btnrow"><button class="ghost" id="btn-torn">Run the one-at-a-time sweep</button></div>
-      <svg id="tornchart" viewBox="0 0 840 240" width="100%" role="img" aria-label="Tornado chart of P95 sensitivity to each input" style="display:none"></svg>
-      <div class="note" id="tornnote" style="display:none"></div>
-    </div>
-    <div class="crqnote"><span class="lead">In CRQ terms</span>This is <b>one-at-a-time sensitivity analysis</b>, the gateway to <b>value of information</b>: the next rupee of analysis effort belongs to the input with the widest bar, because tightening it moves the answer most. Note the trap it defuses: the widest bar typically drives the <b>level</b> of the loss, but the Act 5 <b>ranking</b> can be insensitive to it when that input scales every strategy equally. Levels tell you how big; rankings tell you what to do; they have different sensitivities.</div>
+    <details class="deeper">
+      <summary>Go deeper · sensitivity and value of information</summary>
+      <div class="panel" id="tornpanel">
+        <div class="subhead">Sensitivity · which range is worth refining?</div>
+        <p class="note" style="margin-bottom:4px">Pin one input at its low bound and rerun, then at its high bound and rerun, leaving every other input fully uncertain. The bar spans the resulting P95s for the roadmap plan (always in records, whatever the rupee toggle says); the orange line is the all-uncertain base case. The widest bar is where better evidence buys the most.</p>
+        <div class="btnrow"><button class="ghost" id="btn-torn">Run the one-at-a-time sweep</button></div>
+        <svg id="tornchart" viewBox="0 0 840 240" width="100%" role="img" aria-label="Tornado chart of P95 sensitivity to each input" style="display:none"></svg>
+        <div class="note" id="tornnote" style="display:none"></div>
+      </div>
+      <div class="crqnote"><span class="lead">In CRQ terms</span>This is <b>one-at-a-time sensitivity analysis</b>, the gateway to <b>value of information</b>: the next rupee of analysis effort belongs to the input with the widest bar, because tightening it moves the answer most. Note the trap it defuses: the widest bar typically drives the <b>level</b> of the loss, but the Act 5 <b>ranking</b> can be insensitive to it when that input scales every strategy equally. Levels tell you how big; rankings tell you what to do; they have different sensitivities.</div>
+    </details>
   </div>
 </section>
 
@@ -488,7 +510,7 @@
       <div class="opt r">
         <h3>Roadmap 2031</h3>
         <div class="price">Begin in five years, normal pace · Rs. 6 cr from 2031</div>
-        <p>The institutional default: it is on the roadmap, budgeted for later. Five more years of fully harvestable operation, then a 2-to-8-year migration racing the bowl.</p>
+        <p>The institutional default: it is on the roadmap, budgeted for later. Five more years of fully harvestable operation, then a multi-year migration racing the bowl.</p>
       </div>
       <div class="opt n">
         <h3>Start now</h3>
@@ -499,8 +521,9 @@
     <div class="panel">
       <div class="appetite">
         <span class="aplead">Risk appetite</span>
-        Migration must beat Q-Day in at least <input type="number" id="ap-beats" value="95" min="50" max="100" step="1">% of futures, and the 1-in-20 worst future must stay under <input type="number" id="ap-p95" value="2" min="0.1" max="50" step="0.1"> lakh records.
+        Migration must beat Q-Day in at least <input type="number" id="ap-beats" value="95" min="50" max="100" step="1">% of futures, and the 1-in-20 worst future must stay under <input type="number" id="ap-p95" value="2" min="0.1" max="50" step="0.1"> lakh records. <span class="note" style="font-size:12px">(Appetite is defined in records, the institution's chosen unit, whatever the display toggle says.)</span>
       </div>
+      <label class="moneylab" style="margin-bottom:8px"><input type="checkbox" class="moneycheck" id="mt-5"> Show losses in rupees (cost range is set in Act 4)</label>
       <div class="note" style="margin-bottom:10px">Self-contained and seeded: this replay runs fresh whether or not the earlier acts were clicked, and produces identical numbers on every machine. Each future's chits are drawn once and handed to all four strategies, so "same bowl" is literal: every future is the identical world, lived four ways.</div>
       <div class="btnrow"><button id="btn-compare">Replay 20,000 futures under all four</button></div>
       <div class="chartwrap">
@@ -522,6 +545,7 @@
 <div class="stickybar" id="stickybar" aria-hidden="true">
   <span id="sb-text"></span>
   <a href="#act1">Edit beliefs ↑</a>
+  <button class="ghost" id="btn-share" style="padding:3px 12px; font-size:12px">Copy link</button>
 </div>
 
 <footer>
@@ -558,8 +582,11 @@ const model = {
   mMin:2, mMode:4, mMax:8,
   lMin:8, lMode:15, lMax:25,
   hLo:5000, hHi:50000,
+  cLo:2000, cHi:20000,
 };
 let harvestS = lognCI(model.hLo, model.hHi);
+let costS = lognCI(model.cLo, model.cHi);
+let moneyMode = false;            /* display unit: records (default) or rupees */
 const ROADMAP_DELAY = 5, NOW_DELAY = 0.5;
 /* Fixed structural assumptions (stated on the strategy cards):
    crash compression for "wait" PERT(0.5, 0.6, 0.7) of normal duration;
@@ -570,24 +597,25 @@ const STRAT_NAMES = {wait:"Wait for proof", warn:"Start at warning", road:"Roadm
 
 /*
  * One "world" = one shared draw of everything no strategy controls:
- * Q-Day, migration duration, harvest rate, crash compression, warning
- * lead, and a secrecy lifetime for EVERY yearly harvest cohort that
- * could exist under any strategy. The longest possible harvest window
- * is the wait strategy's, which equals q, so pre-drawing cohort
- * lifetimes out to ceil(q) covers all four strategies. This is what
- * makes the Act 5 comparison literal common-random-numbers: the same
- * chits, lived four ways.
+ * Q-Day, migration duration, harvest rate, cost per record, crash
+ * compression, warning lead, and a secrecy lifetime for EVERY yearly
+ * harvest cohort that could exist under any strategy. The longest
+ * possible harvest window is the wait strategy's, which equals q, so
+ * pre-drawing cohort lifetimes out to ceil(q) covers all four
+ * strategies. This is what makes the Act 5 comparison literal
+ * common-random-numbers: the same chits, lived four ways.
  */
 function drawWorld(){
   const q = pertS(model.qMin,model.qMode,model.qMax);
   const dur = pertS(model.mMin,model.mMode,model.mMax);
   const rate = harvestS();
+  const cost = costS();
   const crashF = pertS(CRASH[0],CRASH[1],CRASH[2]);
   const warnLag = pertS(WARN[0],WARN[1],WARN[2]);
   const nCoh = Math.ceil(q)+1;
   const Ls = new Float64Array(nCoh);
   for(let i=0;i<nCoh;i++) Ls[i] = pertS(model.lMin,model.lMode,model.lMax);
-  return {q, dur, rate, crashF, warnLag, Ls};
+  return {q, dur, rate, cost, crashF, warnLag, Ls};
 }
 
 /*
@@ -611,9 +639,10 @@ function harvFrac(a,b,s,m){
  * own secrecy lifetime Ls[y]: a record captured at time t is still
  * sensitive at Q-Day iff t > q - Ls[y]. Each cohort contributes
  * rate x taper-weighted length of its portion past that cutoff.
+ * Loss in rupees is the same quantity through one multiplication.
  */
 function evalStrategy(world, strategy){
-  const {q, dur, rate, crashF, warnLag, Ls} = world;
+  const {q, dur, rate, cost, crashF, warnLag, Ls} = world;
   let start, mig;
   if(strategy==="wait"){ start=q; mig=q+dur*crashF; }
   else if(strategy==="warn"){ start=Math.max(NOW_DELAY, q-warnLag); mig=start+dur; }
@@ -628,7 +657,7 @@ function evalStrategy(world, strategy){
     if(b > a) recs += rate * harvFrac(a, b, start, mig);
   }
   if(recs < 1e-9) recs = 0;
-  return {q, mig, recs, beats: mig < q};
+  return {q, mig, recs, loss: recs*cost, beats: mig < q};
 }
 
 function playFuture(strategy){ return evalStrategy(drawWorld(), strategy); }
@@ -636,7 +665,41 @@ function playFuture(strategy){ return evalStrategy(drawWorld(), strategy); }
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = id => document.getElementById(id);
 const lakh = r => (r/1e5).toFixed(r<1e5?2:1)+" lakh";
+const crore = v => "Rs. "+(v/1e7).toFixed(v<1e7?2:1)+" cr";
+const fmtU = v => moneyMode ? crore(v) : lakh(v);
+const UB = () => moneyMode ? 1e7 : 1e5;
+const uShort = () => moneyMode ? "cr" : "L";
 const yr = t => Math.round(YEAR0 + t);
+function qArr(a,p){ if(!a.length) return 0; const s=Float64Array.from(a).sort(); return s[Math.min(s.length-1,Math.floor(p*s.length))]; }
+
+/* ---------- shareable URL state ---------- */
+const URLKEYS=[["q0","in-qmin"],["q1","in-qmode"],["q2","in-qmax"],
+  ["m0","in-mmin"],["m1","in-mmode"],["m2","in-mmax"],
+  ["l0","in-lmin"],["l1","in-lmode"],["l2","in-lmax"],
+  ["h0","in-hlo"],["h1","in-hhi"],["c0","in-clo"],["c1","in-chi"],
+  ["ab","ap-beats"],["ap","ap-p95"]];
+function syncURL(){
+  try{
+    const p=new URLSearchParams();
+    URLKEYS.forEach(([k,id])=>p.set(k,$(id).value));
+    if(moneyMode) p.set("rs","1");
+    history.replaceState(null,"","?"+p.toString());
+  }catch(e){/* file:// or sandboxed contexts may refuse; sharing degrades gracefully */}
+}
+function applyURL(){
+  try{
+    const p=new URLSearchParams(location.search);
+    URLKEYS.forEach(([k,id])=>{ if(p.has(k)) $(id).value=p.get(k); });
+    if(p.get("rs")==="1") moneyMode=true;
+  }catch(e){}
+}
+$("btn-share").addEventListener("click",async()=>{
+  syncURL();
+  const url=location.href, b=$("btn-share"), old=b.textContent;
+  try{ await navigator.clipboard.writeText(url); b.textContent="Copied ✓"; }
+  catch(e){ window.prompt("Copy this link:", url); b.textContent=old; return; }
+  setTimeout(()=>{ b.textContent=old; },1600);
+});
 
 /* ---------- input editing ---------- */
 function readInputs(){
@@ -660,10 +723,15 @@ function readInputs(){
   $("in-hlo").value=hlo;
   model.hLo=hlo; model.hHi=hhi; harvestS = lognCI(hlo,hhi);
   $("d-harv").textContent = `${hlo.toLocaleString("en-IN")} to ${hhi.toLocaleString("en-IN")} records / yr`;
+  let clo=Math.max(50,Math.round(+$("in-clo").value)), chi=Math.round(+$("in-chi").value);
+  if(chi<=clo) chi=clo*2, $("in-chi").value=chi;
+  $("in-clo").value=clo;
+  model.cLo=clo; model.cHi=chi; costS = lognCI(clo,chi);
   updateSticky();
   invalidate();
+  syncURL();
 }
-["in-qmin","in-qmode","in-qmax","in-mmin","in-mmode","in-mmax","in-lmin","in-lmode","in-lmax","in-hlo","in-hhi"].forEach(id=>$(id).addEventListener("change",readInputs));
+["in-qmin","in-qmode","in-qmax","in-mmin","in-mmode","in-mmax","in-lmin","in-lmode","in-lmax","in-hlo","in-hhi","in-clo","in-chi"].forEach(id=>$(id).addEventListener("change",readInputs));
 function setInputs(v){
   $("in-qmin").value=v[0]; $("in-qmode").value=v[1]; $("in-qmax").value=v[2];
   $("in-mmin").value=v[3]; $("in-mmode").value=v[4]; $("in-mmax").value=v[5];
@@ -690,6 +758,16 @@ function invalidate(){
   $("cmptable").style.display="none"; $("verdict").style.display="none"; $("excchart").innerHTML="";
   ledgerClear("Beliefs changed. The old ledger is void; the clerk starts fresh.");
 }
+
+/* ---------- rupee display mode ---------- */
+function setMoney(on){
+  moneyMode = !!on;
+  document.querySelectorAll(".moneycheck").forEach(c=>{ c.checked = moneyMode; });
+  renderCounters(); renderHist(); renderConv();
+  if(excData){ renderExc(); renderCmp(); }
+  syncURL();
+}
+document.querySelectorAll(".moneycheck").forEach(c=>c.addEventListener("change",e=>setMoney(e.target.checked)));
 
 /* ---------- sticky belief strip ---------- */
 function updateSticky(){
@@ -774,11 +852,12 @@ $("btn-year10").addEventListener("click",()=>{ for(let i=0;i<10;i++){const f=pla
 
 /* ---------- ACT 4 : mass simulation (roadmap strategy) ---------- */
 const sim = {
-  recs:[], exposed:0, beats:0, tot:0,
-  add(f){ this.recs.push(f.recs); if(f.recs>0)this.exposed++; if(f.beats)this.beats++; this.tot+=f.recs; },
-  reset(){ this.recs=[]; this.exposed=0; this.beats=0; this.tot=0; },
+  recs:[], loss:[], exposed:0, beats:0,
+  add(f){ this.recs.push(f.recs); this.loss.push(f.loss); if(f.recs>0)this.exposed++; if(f.beats)this.beats++; },
+  reset(){ this.recs=[]; this.loss=[]; this.exposed=0; this.beats=0; },
   n(){ return this.recs.length; },
-  q(p){ if(!this.recs.length) return 0; const s=Float64Array.from(this.recs).sort(); return s[Math.min(s.length-1,Math.floor(p*s.length))]; },
+  arr(){ return moneyMode ? this.loss : this.recs; },
+  q(p){ return qArr(this.arr(), p); },
   med(){ return this.q(0.5); }
 };
 const convPts = [];
@@ -799,7 +878,7 @@ function massRun(target){
       }
     }
     done+=todo; renderCounters();
-    if(sim.n()>=200) convPts.push({n:sim.n(), p95:sim.q(0.95)});
+    if(sim.n()>=200) convPts.push({n:sim.n(), r:qArr(sim.recs,0.95), m:qArr(sim.loss,0.95)});
     renderConv(target);
     if(done<target){ if(sim.n()%4000<batch) renderHist(); requestAnimationFrame(step); }
     else { running=false; renderHist(); renderEnvelope(); }
@@ -815,15 +894,16 @@ function renderCounters(){
   $("c-years").textContent=n.toLocaleString();
   $("c-pany").textContent = n? (sim.exposed/n*100).toFixed(1)+"%" : "–";
   $("c-beats").textContent = n? (sim.beats/n*100).toFixed(0)+"%" : "–";
-  $("c-avg").textContent = n>=200? lakh(sim.med()) : "–";
-  $("c-p95").textContent = n>=200? lakh(sim.q(0.95)) : "–";
+  $("c-avg").textContent = n>=200? fmtU(sim.med()) : "–";
+  $("c-p95").textContent = n>=200? fmtU(sim.q(0.95)) : "–";
 }
 function renderHist(){
   const svg=$("histchart"); if(!sim.n()){svg.innerHTML="";$("histnote").textContent="Run the simulation to build the picture.";return;}
   const W=840,H=230,Lx=46,B=190,R=14;
-  const xmax=Math.max(2e5, sim.q(0.995)*1.1);
+  const data=sim.arr();
+  const xmax=Math.max(2*UB(), sim.q(0.995)*1.1);
   const bins=24; const counts=new Array(bins+1).fill(0);
-  for(const d of sim.recs){ if(d<=0){counts[0]++;continue;} counts[1+Math.min(bins-1,Math.floor(d/xmax*bins))]++; }
+  for(const d of data){ if(d<=0){counts[0]++;continue;} counts[1+Math.min(bins-1,Math.floor(d/xmax*bins))]++; }
   const n=sim.n();
   const sqrtMax=Math.sqrt(Math.max(...counts)/n);
   const bw=(W-Lx-R)/(bins+1);
@@ -835,20 +915,23 @@ function renderHist(){
     if(safe && frac>0) s+=`<text x="${Lx+bw/2}" y="${B-h-8}" font-size="12" font-weight="700" fill="#16243f" text-anchor="middle">${(frac*100).toFixed(0)}%</text>`;
   }
   s+=`<line x1="${Lx}" y1="${B}" x2="${W-R}" y2="${B}" stroke="#16243f" stroke-width="1.5"/>`;
-  const stepv=Math.ceil(xmax/8/1e5)*1e5;
+  const stepv=Math.ceil(xmax/8/UB())*UB();
   for(let t=stepv;t<=xmax;t+=stepv){
     const x=Lx+bw+ t/xmax*(W-Lx-R-bw);
-    s+=`<text x="${x}" y="${B+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/1e5).toFixed(0)}L</text>`;
+    s+=`<text x="${x}" y="${B+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/UB()).toFixed(0)}${uShort()}</text>`;
   }
   s+=`<text x="${Lx+bw/2}" y="${B+18}" font-size="11" fill="#5b6472" text-anchor="middle">safe</text>`;
   if(sim.n()>=200){
     const p95=sim.q(0.95); const x=Lx+bw+p95/xmax*(W-Lx-R-bw);
     s+=`<line x1="${x}" y1="${B}" x2="${x}" y2="30" stroke="#ED7D31" stroke-width="2" stroke-dasharray="5 4"/>`;
-    s+=`<text x="${Math.min(x+6,W-230)}" y="42" font-size="12" font-weight="700" fill="#ED7D31">1-in-20 worst future: ${lakh(p95)}</text>`;
+    s+=`<text x="${Math.min(x+6,W-230)}" y="42" font-size="12" font-weight="700" fill="#ED7D31">1-in-20 worst future: ${fmtU(p95)}</text>`;
   }
   svg.innerHTML=s;
-  $("histnote").innerHTML=`The green sliver is the only fully safe path, and look how thin it is: in just <b>${(counts[0]/n*100).toFixed(0)}% of futures</b> does Q-Day arrive late enough for every harvest cohort to have aged out. The blue hill is the rest. Heights are square-root scaled. The axis is in lakh records of applicant data decrypted retroactively.`;
-  attachTip(svg,$("tip1"),(i)=>{ if(i===0) return `Fully safe: ${(counts[0]/n*100).toFixed(1)}% of futures`; const lo=((i-1)*xmax/bins/1e5).toFixed(1), hi=(i*xmax/bins/1e5).toFixed(1); return `${lo} to ${hi} lakh records: ${(counts[i]/n*100).toFixed(2)}% of futures`; });
+  const unitSent = moneyMode
+    ? "The axis is in crore rupees of loss: the same records, monetised by that one extra (and widest) input."
+    : "The axis is in lakh records of applicant data decrypted retroactively.";
+  $("histnote").innerHTML=`The green sliver is the only fully safe path, and look how thin it is: in just <b>${(counts[0]/n*100).toFixed(0)}% of futures</b> does Q-Day arrive late enough for every harvest cohort to have aged out. The blue hill is the rest. Heights are square-root scaled. ${unitSent}`;
+  attachTip(svg,$("tip1"),(i)=>{ if(i===0) return `Fully safe: ${(counts[0]/n*100).toFixed(1)}% of futures`; const lo=((i-1)*xmax/bins/UB()).toFixed(1), hi=(i*xmax/bins/UB()).toFixed(1); return `${lo} to ${hi} ${moneyMode?"crore":"lakh records"}: ${(counts[i]/n*100).toFixed(2)}% of futures`; });
 }
 /* hover and tap both work: pointer events cover mouse and touch */
 function attachTip(svg,tip,msg){
@@ -872,19 +955,20 @@ function renderConv(target){
   if(convPts.length<3){ wrapEl.style.display="none"; svg.innerHTML=""; return; }
   wrapEl.style.display="block";
   const W=840,H=130,Lx=52,B=104,R=16,T=12;
+  const val=pt=> moneyMode? pt.m : pt.r;
   const nmax=Math.max(target||0, convPts[convPts.length-1].n);
-  const pmax=Math.max(...convPts.map(p=>p.p95))*1.15 || 1;
+  const pmax=Math.max(...convPts.map(val))*1.15 || 1;
   let s="";
   for(let g=0;g<=2;g++){
     const y=B-g/2*(B-T);
-    s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="10.5" fill="#5b6472" text-anchor="end">${(g/2*pmax/1e5).toFixed(1)}L</text>`;
+    s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="10.5" fill="#5b6472" text-anchor="end">${(g/2*pmax/UB()).toFixed(1)}${uShort()}</text>`;
   }
-  const fin=convPts[convPts.length-1].p95;
+  const fin=val(convPts[convPts.length-1]);
   const yf=B-fin/pmax*(B-T);
   s+=`<line x1="${Lx}" y1="${yf}" x2="${W-R}" y2="${yf}" stroke="#ED7D31" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>`;
   let p="";
   convPts.forEach((pt,i)=>{
-    const x=Lx+pt.n/nmax*(W-Lx-R), y=B-pt.p95/pmax*(B-T);
+    const x=Lx+pt.n/nmax*(W-Lx-R), y=B-val(pt)/pmax*(B-T);
     p+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";
   });
   s+=`<path d="${p}" fill="none" stroke="#00338C" stroke-width="2" stroke-linecap="round"/>`;
@@ -893,7 +977,7 @@ function renderConv(target){
     const x=Lx+t*(W-Lx-R);
     s+=`<text x="${x}" y="${B+16}" font-size="10.5" fill="#5b6472" text-anchor="middle">${Math.round(t*nmax).toLocaleString()}</text>`;
   }
-  s+=`<text x="${W-R}" y="${Math.max(yf-6,T+8)}" font-size="11" font-weight="700" fill="#ED7D31" text-anchor="end">P95 settles at ${lakh(fin)}</text>`;
+  s+=`<text x="${W-R}" y="${Math.max(yf-6,T+8)}" font-size="11" font-weight="700" fill="#ED7D31" text-anchor="end">P95 settles at ${fmtU(fin)}</text>`;
   svg.innerHTML=s;
 }
 
@@ -908,17 +992,18 @@ function renderEnvelope(){
   $("envelope").innerHTML=`<b>The hand check, courtesy of Mosca.</b> This entire simulation is one inequality run honestly: exposure follows whenever migration time plus secrecy lifetime exceeds the time until Q-Day. Typical migration ends around <b>${yr(ROADMAP_DELAY+migMean)}</b> and a typical cohort stays sensitive about <b>${LMean.toFixed(0)} years</b> beyond harvest, so the danger zone is any Q-Day chit before roughly <b>${yr(threshold)}</b>. Read the bowl: about <b>${(cnt/M*100).toFixed(0)}%</b> of chits land before that year, and indeed about <b>${(sim.exposed/n*100).toFixed(0)}%</b> of futures ended exposed (the migration taper makes the simulation slightly kinder than this back-of-envelope line). The clerk did nothing the inequality didn't already say; it just also told you <em>how large</em> each exposure is, which the inequality cannot.`;
 }
 
-/* ---------- tornado : one-at-a-time sensitivity ---------- */
+/* ---------- tornado : one-at-a-time sensitivity (always in records) ---------- */
 function drawWorldPinned(pin){
   const q = pin.q!==undefined ? pin.q : pertS(model.qMin,model.qMode,model.qMax);
   const dur = pin.dur!==undefined ? pin.dur : pertS(model.mMin,model.mMode,model.mMax);
   const rate = pin.rate!==undefined ? pin.rate : harvestS();
+  const cost = costS();
   const crashF = pertS(CRASH[0],CRASH[1],CRASH[2]);
   const warnLag = pertS(WARN[0],WARN[1],WARN[2]);
   const nCoh = Math.ceil(q)+1;
   const Ls = new Float64Array(nCoh);
   for(let i=0;i<nCoh;i++) Ls[i] = pin.L!==undefined ? pin.L : pertS(model.lMin,model.lMode,model.lMax);
-  return {q, dur, rate, crashF, warnLag, Ls};
+  return {q, dur, rate, cost, crashF, warnLag, Ls};
 }
 function pinnedP95(pin, n){
   rand = mulberry32(SEED+2);        /* identical seed per run: differences are the pin, not luck */
@@ -976,25 +1061,29 @@ function renderTorn(items, base){
  * all four strategies through it. Every between-strategy difference is
  * then purely the strategy, never the luck of separate sampling. The
  * run is also seeded, so the same inputs give the same table anywhere.
+ * Both metrics (records and rupees) are recorded per trial; the toggle
+ * only changes which one is displayed.
  */
 function runComparison(n){
   const acc = {};
-  for(const s of STRATEGIES) acc[s] = {recs:new Float64Array(n), exposed:0, beats:0, tot:0};
+  for(const s of STRATEGIES) acc[s] = {recs:new Float64Array(n), loss:new Float64Array(n), exposed:0, beats:0};
   for(let i=0;i<n;i++){
     const world = drawWorld();
     for(const s of STRATEGIES){
       const f = evalStrategy(world, s);
       const o = acc[s];
-      o.recs[i]=f.recs; o.tot+=f.recs;
+      o.recs[i]=f.recs; o.loss[i]=f.loss;
       if(f.recs>0)o.exposed++; if(f.beats)o.beats++;
     }
   }
   const out = {};
   for(const s of STRATEGIES){
     const o=acc[s];
-    const srt=Float64Array.from(o.recs).sort();
-    const q=p=>srt[Math.min(n-1,Math.floor(p*n))];
-    out[s]={recs:srt, pexp:o.exposed/n, beats:o.beats/n, mean:o.tot/n, med:q(0.5), p95:q(0.95), p99:q(0.99)};
+    const rs=Float64Array.from(o.recs).sort(), ls=Float64Array.from(o.loss).sort();
+    const qr=p=>rs[Math.min(n-1,Math.floor(p*n))], qm=p=>ls[Math.min(n-1,Math.floor(p*n))];
+    out[s]={recsS:rs, lossS:ls, pexp:o.exposed/n, beats:o.beats/n,
+            medR:qr(0.5), p95R:qr(0.95), p99R:qr(0.99),
+            medM:qm(0.5), p95M:qm(0.95), p99M:qm(0.99)};
   }
   return out;
 }
@@ -1005,13 +1094,14 @@ function doCompare(){
   renderExc(); renderCmp();
 }
 $("btn-compare").addEventListener("click",doCompare);
-["ap-beats","ap-p95"].forEach(id=>$(id).addEventListener("change",()=>{ if(excData){ renderExc(); renderCmp(); } }));
+["ap-beats","ap-p95"].forEach(id=>$(id).addEventListener("change",()=>{ if(excData){ renderExc(); renderCmp(); } syncURL(); }));
 
 function renderExc(){
   if(!excData) return;
   const {wait,warn,road,now}=excData;
+  const A=p=> moneyMode? p.lossS : p.recsS;
   const svg=$("excchart"); const W=840,Bm=246,R=16,T=18,Lx=52;
-  const xmax=Math.max(4e5, wait.p99*1.15);
+  const xmax=Math.max(4*UB(), (moneyMode?wait.p99M:wait.p99R)*1.15);
   const ymax=1.02;
   function exc(arr,x){
     let lo=0,hi=arr.length;
@@ -1031,21 +1121,23 @@ function renderExc(){
     const y=Bm-g/4*(Bm-T);
     s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="11" fill="#5b6472" text-anchor="end">${(g/4*ymax*100).toFixed(0)}%</text>`;
   }
-  /* appetite ceiling */
-  const apv=+$("ap-p95").value*1e5;
-  if(apv>0 && apv<xmax){
-    const x=Lx+apv/xmax*(W-Lx-R);
-    s+=`<line x1="${x}" y1="${Bm}" x2="${x}" y2="${T-4}" stroke="#ED7D31" stroke-width="2" stroke-dasharray="2 5"/>`;
-    s+=`<text x="${Math.min(x+6,W-170)}" y="${T+8}" font-size="11.5" font-weight="700" fill="#ED7D31">appetite ceiling: ${(+$("ap-p95").value).toFixed(1)} lakh</text>`;
+  /* appetite ceiling: defined in records, so drawn only in records view */
+  if(!moneyMode){
+    const apv=+$("ap-p95").value*1e5;
+    if(apv>0 && apv<xmax){
+      const x=Lx+apv/xmax*(W-Lx-R);
+      s+=`<line x1="${x}" y1="${Bm}" x2="${x}" y2="${T-4}" stroke="#ED7D31" stroke-width="2" stroke-dasharray="2 5"/>`;
+      s+=`<text x="${Math.min(x+6,W-170)}" y="${T+8}" font-size="11.5" font-weight="700" fill="#ED7D31">appetite ceiling: ${(+$("ap-p95").value).toFixed(1)} lakh</text>`;
+    }
   }
-  s+=path(wait.recs,"#16243f")+path(warn.recs,"#3a7d44","2 5")+path(road.recs,"#5b6472","7 5")+path(now.recs,"#ED7D31");
+  s+=path(A(wait),"#16243f")+path(A(warn),"#3a7d44","2 5")+path(A(road),"#5b6472","7 5")+path(A(now),"#ED7D31");
   s+=`<line x1="${Lx}" y1="${Bm}" x2="${W-R}" y2="${Bm}" stroke="#16243f" stroke-width="1.5"/>`;
-  const stepv=Math.ceil(xmax/9/1e5)*1e5;
+  const stepv=Math.ceil(xmax/9/UB())*UB();
   for(let t=0;t<=xmax;t+=stepv){
     const x=Lx+t/xmax*(W-Lx-R);
-    s+=`<text x="${x}" y="${Bm+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/1e5).toFixed(0)}L</text>`;
+    s+=`<text x="${x}" y="${Bm+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/UB()).toFixed(0)}${uShort()}</text>`;
   }
-  s+=`<text x="${(Lx+W-R)/2}" y="${Bm+36}" font-size="12" fill="#5b6472" text-anchor="middle">A future worse than this many lakh records decrypted ...</text>`;
+  s+=`<text x="${(Lx+W-R)/2}" y="${Bm+36}" font-size="12" fill="#5b6472" text-anchor="middle">A future worse than this ${moneyMode?"many crore rupees of loss":"many lakh records decrypted"} ...</text>`;
   svg.innerHTML=s;
   const tip=$("tip2");
   const handle=e=>{
@@ -1054,7 +1146,7 @@ function renderExc(){
     if(px<Lx||px>W-R){tip.style.opacity=0;return;}
     const x=(px-Lx)/(W-Lx-R)*xmax;
     tip.style.opacity=1; tip.style.left=(e.clientX-r.left)+"px"; tip.style.top=(e.clientY-r.top)+"px";
-    tip.textContent=`Worse than ${(x/1e5).toFixed(1)} lakh: wait ${(exc(wait.recs,x)*100).toFixed(0)}% · warning ${(exc(warn.recs,x)*100).toFixed(0)}% · roadmap ${(exc(road.recs,x)*100).toFixed(0)}% · now ${(exc(now.recs,x)*100).toFixed(0)}%`;
+    tip.textContent=`Worse than ${(x/UB()).toFixed(1)} ${moneyMode?"cr":"lakh"}: wait ${(exc(A(wait),x)*100).toFixed(0)}% · warning ${(exc(A(warn),x)*100).toFixed(0)}% · roadmap ${(exc(A(road),x)*100).toFixed(0)}% · now ${(exc(A(now),x)*100).toFixed(0)}%`;
   };
   svg.onpointermove=handle;
   svg.onpointerdown=handle;
@@ -1064,28 +1156,31 @@ function renderCmp(){
   const {wait,warn,road,now}=excData;
   const apB=+$("ap-beats").value, apP=+$("ap-p95").value;
   const pf=ok=>ok?'<span class="stamp safe">pass</span>':'<span class="stamp">fail</span>';
+  const gMed=p=> moneyMode? crore(p.medM) : lakh(p.medR);
+  const gP95=p=> moneyMode? crore(p.p95M) : lakh(p.p95R);
+  const gP99=p=> moneyMode? crore(p.p99M) : lakh(p.p99R);
   const rows=[
     ["Futures with any exposure", p=>(p.pexp*100).toFixed(0)+"%"],
     ["Migration beats Q-Day", p=>(p.beats*100).toFixed(0)+"%"],
-    ["Typical exposure (median)", p=>lakh(p.med)],
-    ["1-in-20 worst future", p=>lakh(p.p95)],
-    ["1-in-100 worst future", p=>lakh(p.p99)],
+    ["Typical exposure (median)", gMed],
+    ["1-in-20 worst future", gP95],
+    ["1-in-100 worst future", gP99],
     [`Appetite: beats Q-Day ≥ ${apB}%`, p=>pf(p.beats*100>=apB)],
-    [`Appetite: P95 ≤ ${apP} lakh`, p=>pf(p.p95<=apP*1e5)],
+    [`Appetite: P95 ≤ ${apP} lakh records`, p=>pf(p.p95R<=apP*1e5)],
   ];
   let html="";
   for(const [label,f] of rows){
     const vNow=f(now);
     html+=`<tr><td>${label}</td><td>${f(wait)}</td><td>${f(warn)}</td><td>${f(road)}</td><td class="${vNow.indexOf("stamp")<0?"better":""}">${vNow}</td></tr>`;
   }
-  html+=`<tr><td>Indicative cost</td><td>Rs. 12 to 18 cr, crash</td><td>Rs. 6 cr, date unknown</td><td>Rs. 6 cr, from 2031</td><td>Rs. 6 cr, from 2026</td></tr>`;
+  html+=`<tr><td>Indicative cost of migrating</td><td>Rs. 12 to 18 cr, crash</td><td>Rs. 6 cr, date unknown</td><td>Rs. 6 cr, from 2031</td><td>Rs. 6 cr, from 2026</td></tr>`;
   $("cmpbody").innerHTML=html; $("cmptable").style.display="table";
-  const passes=STRATEGIES.filter(s=>excData[s].beats*100>=apB && excData[s].p95<=apP*1e5).map(s=>STRAT_NAMES[s]);
+  const passes=STRATEGIES.filter(s=>excData[s].beats*100>=apB && excData[s].p95R<=apP*1e5).map(s=>STRAT_NAMES[s]);
   const apLine = passes.length
-    ? `Against the stated appetite (beats Q-Day in ≥ ${apB}% of futures, P95 ≤ ${apP} lakh), <b>${passes.join(" and ")}</b> ${passes.length>1?"pass":"passes"}; every other strategy fails. Tighten or loosen the appetite above and watch the verdict re-test itself.`
-    : `Against the stated appetite (beats Q-Day in ≥ ${apB}% of futures, P95 ≤ ${apP} lakh), <b>no strategy passes</b>: either the appetite has to move, or the start date does. That sentence, on one page, is the entire point of CRQ.`;
+    ? `Against the stated appetite (beats Q-Day in ≥ ${apB}% of futures, P95 ≤ ${apP} lakh records), <b>${passes.join(" and ")}</b> ${passes.length>1?"pass":"passes"}; every other strategy fails. Tighten or loosen the appetite above and watch the verdict re-test itself.`
+    : `Against the stated appetite (beats Q-Day in ≥ ${apB}% of futures, P95 ≤ ${apP} lakh records), <b>no strategy passes</b>: either the appetite has to move, or the start date does. That sentence, on one page, is the entire point of CRQ.`;
   const v=$("verdict"); v.style.display="block";
-  v.innerHTML=`<b>Read the table honestly.</b> Even starting now, exposure occurs in about ${(now.pexp*100).toFixed(0)}% of futures, because data harvested during the migration itself stays decryptable. Any proposal promising zero exposure should be examined for what it is ignoring. The sophisticated objection fares little better than the naive one: granted a perfect 2-to-5-year warning, that strategy still beats Q-Day in only ${(warn.beats*100).toFixed(0)}% of futures with a median exposure of ${lakh(warn.med)}, because warning helps the clock you control and does nothing for traffic already harvested. What starting now actually buys: the typical exposure falls from ${lakh(wait.med)} (wait) and ${lakh(road.med)} (roadmap) to ${lakh(now.med)}, the 1-in-100 future falls from ${lakh(wait.p99)} to ${lakh(now.p99)}, the migration finishes before Q-Day in ${(now.beats*100).toFixed(0)}% of futures instead of ${(wait.beats*100).toFixed(0)}%, and the spend is the same Rs. 6 crore rather than a crash programme at double or triple. And because every future was the identical world lived four ways, none of these gaps is sampling luck. ${apLine} Notice what was never needed: a forecast of Q-Day. The race, not the date, was always the decision.`;
+  v.innerHTML=`<b>Read the table honestly.</b> Even starting now, exposure occurs in about ${(now.pexp*100).toFixed(0)}% of futures, because data harvested during the migration itself stays decryptable. Any proposal promising zero exposure should be examined for what it is ignoring. The sophisticated objection fares little better than the naive one: granted a perfect 2-to-5-year warning, that strategy still beats Q-Day in only ${(warn.beats*100).toFixed(0)}% of futures with a median exposure of ${gMed(warn)}, because warning helps the clock you control and does nothing for traffic already harvested. What starting now actually buys: the typical exposure falls from ${gMed(wait)} (wait) and ${gMed(road)} (roadmap) to ${gMed(now)}, the 1-in-100 future falls from ${gP99(wait)} to ${gP99(now)}, the migration finishes before Q-Day in ${(now.beats*100).toFixed(0)}% of futures instead of ${(wait.beats*100).toFixed(0)}%, and the spend is the same Rs. 6 crore rather than a crash programme at double or triple. And because every future was the identical world lived four ways, none of these gaps is sampling luck. ${apLine} Notice what was never needed: a forecast of Q-Day. The race, not the date, was always the decision.`;
 }
 
 /* ---------- CRQ rail scroll tracking ---------- */
@@ -1109,7 +1204,11 @@ function renderCmp(){
 })();
 
 /* ---------- init ---------- */
-renderBowl(); ledgerClear("The clerk is ready. Play a future above."); updateSticky();
+applyURL();                /* a shared link restores the full configuration */
+readInputs();              /* validates, syncs model, sticky strip, and URL */
+ledgerClear("The clerk is ready. Play a future above.");
+$("drawcount").textContent="0 chits drawn";
+if(moneyMode){ const m=moneyMode; moneyMode=false; setMoney(m); }
 /* ---------- scroll reveal ---------- */
 (function(){
   if(typeof IntersectionObserver==="undefined" || !document.querySelectorAll) return;
