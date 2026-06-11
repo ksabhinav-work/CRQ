@@ -10,7 +10,7 @@
 <style>
   :root{
     --paper:#f5f2ea; --panel:#fffdf7; --ink:#141f38; --ink2:#1b2a4d; --blue:#00338C;
-    --orange:#ED7D31; --slate:#5b6472; --line:#ddd6c6; --rule:#ece6d6; --green:#3a7d44;
+    --orange:#ED7D31; --orange-ink:#b85c1a; --slate:#5b6472; --line:#ddd6c6; --rule:#ece6d6; --green:#3a7d44;
     --hero-muted:#aab6d4; --hero-body:#cdd5e8;
     --disp:'Fraunces',Georgia,'Times New Roman',serif;
     --body:'Gelasio',Georgia,'Times New Roman',serif;
@@ -80,11 +80,11 @@
   /* ---------- method chips & CRQ notes ---------- */
   .chip{
     display:inline-flex; align-items:center; gap:8px;
-    border:1.5px solid var(--orange); color:var(--orange); background:rgba(255,255,255,.7);
+    border:1.5px solid var(--orange-ink); color:var(--orange-ink); background:rgba(255,255,255,.7);
     font-size:10.5px; letter-spacing:.17em; text-transform:uppercase; font-weight:700;
     padding:5px 13px; border-radius:999px; margin-bottom:14px;
   }
-  .chip::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--orange)}
+  .chip::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--orange-ink)}
   .crqnote{
     background:#fff; border:1.5px solid var(--line); border-left:4px solid var(--blue);
     padding:12px 15px; margin:16px 0 4px; font-size:13.5px; color:var(--slate); max-width:690px;
@@ -127,7 +127,7 @@
     padding:20px 22px; box-shadow:0 14px 34px rgba(20,31,56,.16);
   }
   .scen-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:16px; margin-top:12px}
-  .scen-grid .f .k{font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--orange); font-weight:700}
+  .scen-grid .f .k{font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--orange-ink); font-weight:700}
   .scen-grid .f .v{font-size:13.5px; margin-top:3px; line-height:1.5}
   .scenario .intro{font-size:14px; color:var(--slate)}
   .scenario .narr{font-size:14.5px; border-top:1px solid var(--rule); margin-top:16px; padding-top:13px}
@@ -135,9 +135,21 @@
   /* ---------- acts ---------- */
   section{padding:62px 0 16px; position:relative}
   .ghostnum{
-    position:absolute; top:-34px; right:-8px; z-index:0; pointer-events:none;
-    font-family:var(--disp); font-weight:700; font-size:clamp(120px,17vw,200px);
-    line-height:1; color:rgba(20,31,56,.055); user-select:none;
+    position:absolute; top:0; right:0; z-index:0; pointer-events:none;
+    font-family:var(--ui); font-weight:700; font-size:clamp(16px,2.6vw,26px);
+    letter-spacing:.24em; text-transform:uppercase; line-height:1;
+    color:rgba(20,31,56,.14); border:3px solid rgba(20,31,56,.10);
+    border-radius:6px; padding:10px 14px 9px 18px; transform:rotate(-6deg);
+    user-select:none;
+  }
+
+  /* hero race diagram */
+  #racesvg rect.race-bar{transform-box:fill-box; transform-origin:left center; animation:racegrow .8s cubic-bezier(.2,.7,.25,1) both}
+  #racesvg .race-chit{animation:chitfade .7s ease .85s both}
+  @keyframes racegrow{from{transform:scaleX(0)}}
+  @keyframes chitfade{from{opacity:0}}
+  @media (prefers-reduced-motion: reduce){
+    #racesvg rect.race-bar, #racesvg .race-chit{animation:none}
   }
   .actlabel{display:flex; align-items:baseline; gap:14px; margin-bottom:10px; position:relative; z-index:1}
   .actlabel h2{font-size:clamp(26px,3.6vw,32px)}
@@ -159,16 +171,57 @@
 
   .bowlrow{display:grid; grid-template-columns:250px 1fr; gap:24px; align-items:start}
   @media (max-width:680px){.bowlrow{grid-template-columns:1fr}}
+  /* shadow lives on the wrapper: an ancestor's drop-shadow sees the clipped child,
+     while filter on the clipped element itself would be sliced by its own clip-path */
+  .paper{display:inline-block; filter:drop-shadow(4px 4px 0 rgba(20,31,56,.22))}
+  .paper.sm{filter:drop-shadow(3px 3px 0 rgba(20,31,56,.20))}
+  .paper.stackp{filter:drop-shadow(2.5px 2.5px 0 #fffdf7) drop-shadow(1.5px 1.5px 0 rgba(20,31,56,.5)) drop-shadow(4px 4px 0 rgba(20,31,56,.15))}
   .chit{
     display:inline-block; background:#fff; border:1.5px solid var(--ink);
     padding:12px 18px; font-family:var(--disp); font-size:26px; font-weight:600;
-    box-shadow:4px 4px 0 rgba(20,31,56,.12); transform:rotate(-1.6deg); min-width:150px; text-align:center;
+    transform:rotate(-1.6deg); min-width:150px; text-align:center;
     clip-path:polygon(1.5% 5%, 99% 0%, 100% 96%, 3% 100%);
   }
   .chit small{display:block; font-family:var(--ui); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--slate); font-weight:700; margin-bottom:2px}
   @keyframes pop{0%{transform:scale(.6) rotate(-9deg); opacity:0}100%{transform:scale(1) rotate(-1.6deg); opacity:1}}
   .chit.pop{animation:pop .26s ease-out}
   @media (prefers-reduced-motion: reduce){.chit.pop{animation:none}}
+
+  /* the Q-Day bowl: the belief as a vessel of slips */
+  .bowlwrap{position:relative; margin:14px 0 2px; width:200px}
+  .clerkrow{display:grid; grid-template-columns:192px 1fr; gap:20px; align-items:end}
+  .clerkcol{padding-bottom:2px}
+  @media (max-width:680px){.clerkrow{grid-template-columns:1fr} .clerkcol{display:flex; justify-content:center}}
+  #clerksvg{display:block}
+  #clerksvg.shake{animation:bowlshake .32s ease}
+  #bowlsvg{display:block}
+  #bowlsvg.shake{animation:bowlshake .32s ease}
+  @keyframes bowlshake{0%{transform:rotate(0)}30%{transform:rotate(-1.6deg)}60%{transform:rotate(1.3deg)}100%{transform:rotate(0)}}
+  .flyp{
+    position:absolute; left:calc(50% - 23px); top:30px; width:46px; height:28px;
+    filter:drop-shadow(2px 2px 0 rgba(20,31,56,.18));
+    animation:flyup .5s cubic-bezier(.3,.6,.3,1) forwards; pointer-events:none; z-index:2;
+  }
+  .flyp .flyin{
+    display:block; width:100%; height:100%; background:#fff; border:1.5px solid var(--ink);
+    clip-path:polygon(2% 8%, 98% 0%, 100% 92%, 1% 100%);
+  }
+  @keyframes flyup{0%{transform:translateY(0) rotate(9deg) scale(.6); opacity:0}14%{opacity:1}100%{transform:translateY(-126px) rotate(-3deg) scale(1); opacity:0}}
+  @media (prefers-reduced-motion: reduce){.flyp{display:none} #bowlsvg.shake{animation:none}}
+
+  /* mini chits: the clerk's actual draw, one slip per bowl */
+  .chittray{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; margin:4px 0 10px}
+  .mchit{
+    display:inline-block; background:#fff; border:1.5px solid var(--ink);
+    padding:7px 14px 6px; font-family:var(--disp); font-size:16.5px; font-weight:600;
+    text-align:center; min-width:92px;
+    clip-path:polygon(2% 7%, 98% 0%, 100% 93%, 1% 100%);
+    --rot:-2deg; transform:rotate(var(--rot));
+    animation:mpop .28s ease-out both;
+  }
+  .mchit small{display:block; font-family:var(--ui); font-size:8.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--slate); font-weight:700; margin-bottom:1px}
+  @keyframes mpop{0%{transform:scale(.55) rotate(-10deg); opacity:0}100%{transform:scale(1) rotate(var(--rot)); opacity:1}}
+  @media (prefers-reduced-motion: reduce){.mchit{animation:none}}
   .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; align-items:center}
 
   .ledgerhead{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px}
@@ -188,19 +241,19 @@
   .ledger .row.quiet{color:var(--slate)}
   .ledger .row.hit{color:var(--ink); font-weight:600}
   .stamp{
-    display:inline-block; border:1.5px solid var(--orange); color:var(--orange);
+    display:inline-block; border:1.5px solid var(--orange-ink); color:var(--orange-ink);
     font-size:10px; letter-spacing:.13em; padding:0 6px; border-radius:2px;
     transform:rotate(-2deg); text-transform:uppercase; font-weight:700;
   }
   .stamp.safe{border-color:var(--green); color:var(--green)}
   .gatebox{font-size:14px; margin:10px 0; min-height:24px}
   .gatebox b{color:var(--blue)}
-  .gatebox .hitword{color:var(--orange); font-weight:700}
+  .gatebox .hitword{color:var(--orange-ink); font-weight:700}
 
   .counters{display:grid; grid-template-columns:repeat(auto-fit,minmax(152px,1fr)); gap:13px; margin:16px 0}
   .counter{background:var(--panel); border:1.5px solid var(--line); border-radius:4px; padding:13px 15px}
   .counter .v{font-family:var(--disp); font-weight:600; font-size:28px; line-height:1.1; font-variant-numeric:tabular-nums}
-  .counter .v.accent{color:var(--orange)}
+  .counter .v.accent{color:var(--orange-ink)}
   .counter .k{font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--slate); font-weight:700; margin-top:6px; border-top:1px solid var(--rule); padding-top:5px}
 
   svg text{font-family:var(--ui)}
@@ -219,20 +272,26 @@
   .opt h3{font-size:18px; margin-bottom:5px}
   .opt .price{font-size:12.5px; color:var(--slate); margin-bottom:9px}
   .opt p{font-size:13.5px}
-  table.cmp{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:14px}
+  table.cmp{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:14px; background:var(--panel); border:1.5px solid var(--line)}
   table.cmp th{background:var(--ink); color:#fff; text-align:left; padding:8px 11px; font-weight:600; font-size:12.5px}
+  table.cmp thead th:first-child{border-right:1px solid rgba(255,255,255,.28)}
   table.cmp td{padding:8px 11px; border-bottom:1px solid var(--rule); font-variant-numeric:tabular-nums; transition:background .1s}
+  table.cmp td:not(:first-child){font-family:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace; font-size:12.5px}
   table.cmp tbody tr:hover td{background:#f4f0e4}
-  table.cmp tr td:first-child{color:var(--slate)}
-  .better{color:var(--orange); font-weight:700}
+  table.cmp tr td:first-child{color:var(--slate); border-right:1px solid rgba(217,108,108,.45)}
+  .better{color:var(--orange-ink); font-weight:700}
 
   .appetite{
-    background:#fff; border:1.5px solid var(--line); border-left:4px solid var(--orange);
-    border-radius:3px; padding:11px 14px; margin:0 0 12px; font-size:13.5px; color:var(--ink);
+    background:var(--paper); border:1.5px dashed var(--orange);
+    border-radius:3px; padding:12px 14px; margin:0 0 12px; font-size:13.5px; color:var(--ink);
     display:flex; gap:8px; align-items:center; flex-wrap:wrap;
   }
-  .appetite .aplead{font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; color:var(--orange); margin-right:4px}
-  .appetite input{width:64px; padding:3px 6px}
+  .appetite .aplead{
+    display:inline-block; border:1.5px solid var(--orange-ink); color:var(--orange-ink);
+    font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; font-weight:700;
+    padding:2px 9px; border-radius:2px; transform:rotate(-2deg); margin-right:6px;
+  }
+  .appetite input{width:64px; padding:3px 6px; border-color:var(--orange); background:#fff}
 
   .callout{
     background:var(--panel); border:1.5px solid var(--line); border-left:4px solid var(--orange);
@@ -253,7 +312,7 @@
     font-weight:700; color:var(--blue); padding:8px 0;
   }
   details.deeper>summary::-webkit-details-marker{display:none}
-  details.deeper>summary::before{content:"+"; font-family:var(--disp); font-size:17px; line-height:1; color:var(--orange)}
+  details.deeper>summary::before{content:"+"; font-family:var(--disp); font-size:17px; line-height:1; color:var(--orange-ink)}
   details.deeper[open]>summary::before{content:"–"}
   details.deeper>summary:hover{color:var(--ink)}
 
@@ -326,10 +385,38 @@
     <div class="eyebrow">How cyber risk quantification works · an interactive illustration</div>
     <h1>Harvest Now,<br>Decrypt Later</h1>
     <div class="sub">The case: when should SWIT migrate to post-quantum cryptography?</div>
-    <p class="lede">The presentation introduced post-quantum risk and cyber risk quantification as ideas. This page is the two of them running live: the same method, performed end to end on one real question, until the decision becomes visible. The labels along the way show which step of CRQ is being performed.</p>
+    <p class="lede">Two ideas, running live: post-quantum risk, and cyber risk quantification, the method for deciding what to do about it. One real question, worked end to end, until the decision becomes visible. The labels along the way show which step of CRQ is being performed.</p>
     <div class="mosca"><small>The deterministic version · Mosca's inequality</small>
       If migration time + secrecy lifetime exceeds the time until Q-Day, <b>exposure follows</b>. CRQ is this line with the uncertainty in each term honoured instead of suppressed.
     </div>
+    <svg id="racesvg" viewBox="0 0 690 170" width="100%" style="max-width:690px; margin-top:30px; display:block" role="img" aria-label="The race on one timeline: the Q-Day uncertainty band, the migration window, and the secrecy clock of the first harvest, with the overlap marked as exposure">
+      <line x1="60" y1="38" x2="670" y2="38" stroke="rgba(255,255,255,.14)"/>
+      <line x1="60" y1="78" x2="670" y2="78" stroke="rgba(255,255,255,.14)"/>
+      <line x1="60" y1="118" x2="670" y2="118" stroke="rgba(255,255,255,.14)"/>
+      <text x="52" y="42" font-size="9.5" letter-spacing="2" fill="#aab6d4" text-anchor="end">Q-DAY</text>
+      <text x="52" y="82" font-size="9.5" letter-spacing="2" fill="#aab6d4" text-anchor="end">MIGRATION</text>
+      <text x="52" y="122" font-size="9.5" letter-spacing="2" fill="#aab6d4" text-anchor="end">SECRECY</text>
+      <rect class="race-bar" style="animation-delay:.15s" x="141" y="32" width="427" height="12" rx="6" fill="#ED7D31" opacity="0.16"/>
+      <rect class="race-bar" style="animation-delay:.35s" x="162" y="72" width="91" height="12" rx="2" fill="#aab6d4" opacity="0.85"/>
+      <rect class="race-bar" style="animation-delay:.55s" x="60" y="112" width="224" height="12" rx="2" fill="rgba(255,255,255,.30)"/>
+      <rect class="race-bar" style="animation-delay:.72s" x="284" y="112" width="81" height="12" rx="2" fill="#ED7D31" opacity="0.9"/>
+      <text x="324" y="105" font-size="9.5" letter-spacing="1.5" fill="#ED7D31" text-anchor="middle">EXPOSURE</text>
+      <g class="race-chit">
+        <line x1="284" y1="57" x2="284" y2="140" stroke="#ED7D31" stroke-width="1.5" stroke-dasharray="3 4" opacity=".8"/>
+        <g transform="rotate(-4 284 40)">
+          <polygon points="252,27 316,23 313,55 255,58" fill="rgba(0,0,0,.38)" transform="translate(3.5,4)"/>
+          <polygon points="252,27 316,23 313,55 255,58" fill="#fbfaf6" stroke="#141f38" stroke-width="1.2"/>
+          <line x1="256" y1="31" x2="259" y2="54" stroke="rgba(20,31,56,.12)" stroke-width="1"/>
+          <text x="284" y="37.5" font-size="7" letter-spacing="1.6" fill="#5b6472" text-anchor="middle" font-family="Lato,Arial,sans-serif" font-weight="700">THE CHIT SAYS</text>
+          <text x="285" y="51.5" font-size="14" font-weight="600" fill="#141f38" text-anchor="middle" font-family="Fraunces,Georgia,serif">2037?</text>
+        </g>
+      </g>
+      <line x1="60" y1="140" x2="670" y2="140" stroke="rgba(255,255,255,.25)"/>
+      <text x="60" y="158" font-size="10" fill="#aab6d4" text-anchor="middle">2026</text>
+      <text x="263" y="158" font-size="10" fill="#aab6d4" text-anchor="middle">2036</text>
+      <text x="467" y="158" font-size="10" fill="#aab6d4" text-anchor="middle">2046</text>
+      <text x="670" y="158" font-size="10" fill="#aab6d4" text-anchor="middle">2056</text>
+    </svg>
   </div>
 </header>
 
@@ -340,9 +427,9 @@
       <div class="intro">Every quantification starts with a well-formed scenario: not "quantum risk", but a sentence with defined parts.</div>
       <div class="scen-grid">
         <div class="f"><div class="k">Actor &amp; path</div><div class="v">An adversary recording SWIT's classically encrypted traffic today, to decrypt the day a quantum computer exists</div></div>
-        <div class="f"><div class="k">Asset</div><div class="v">Applicant KYC files, financials and personal data on the single-window portal</div></div>
+        <div class="f"><div class="k">Asset</div><div class="v">The KYC dossiers of individuals behind every SWIT application: directors, beneficial owners, key personnel, with financials and identity documents</div></div>
         <div class="f"><div class="k">Loss driver</div><div class="v">Confidentiality, realised retroactively at Q-Day</div></div>
-        <div class="f"><div class="k">Horizon &amp; unit</div><div class="v">Multi-decade · measured in records exposed, not rupees</div></div>
+        <div class="f"><div class="k">Horizon &amp; unit</div><div class="v">Multi-decade · measured in person-records exposed, not rupees</div></div>
       </div>
       <div class="narr">The race has three runners: Q-Day, your migration, and the clock on how long the data must stay secret. Nobody knows when Q-Day is, and the method's quiet trick is that you will never need to.</div>
     </div>
@@ -352,7 +439,7 @@
 <!-- ACT 1 -->
 <section id="act1" class="reveal">
   <div class="wrap">
-    <div class="ghostnum" aria-hidden="true">1</div>
+    <div class="ghostnum" aria-hidden="true">Act 1</div>
     <div class="chip">CRQ step 2 · Decomposition and calibrated estimation</div>
     <div class="actlabel"><h2>Four honest ranges</h2></div>
     <p>You cannot estimate "our quantum risk" directly, and CRQ never asks anyone to. The unknowable whole is decomposed into the parts that actually generate the loss, and each part gets a calibrated range: an interval the expert would genuinely bet on, with its anchoring evidence written down.</p>
@@ -377,9 +464,9 @@
       </div>
       <div class="card">
         <div class="tag">How much, if collection is happening?</div>
-        <div class="range" id="d-harv">5,000 to 50,000 records / yr</div>
-        <div class="anchor">Deliberately wide; nobody observes harvesting directly, and the width is the honesty. Doubt about whether collection is happening at all scales every probability equally and leaves the comparison untouched</div>
-        <div class="edit"><input type="number" id="in-hlo" value="5000" min="100" max="100000" step="100" style="width:88px"> to <input type="number" id="in-hhi" value="50000" min="1000" max="500000" step="1000" style="width:88px"> / yr</div>
+        <div class="range" id="d-harv">1,000 to 30,000 person-records / yr</div>
+        <div class="anchor">Fermi, written out: roughly 1,000 entities today, perhaps 10,000 within a decade, gives 200 to 1,200 SWIT applications a year; each carries the KYC dossiers of 5 to 30 individuals (directors, beneficial owners, KMPs). The unit is the person-record, one individual's dossier, not the entity file. Deliberately wide; nobody observes harvesting directly. Doubt about whether collection is happening at all scales every probability equally and leaves the comparison untouched</div>
+        <div class="edit"><input type="number" id="in-hlo" value="1000" min="100" max="100000" step="100" style="width:88px"> to <input type="number" id="in-hhi" value="30000" min="500" max="500000" step="500" style="width:88px"> / yr</div>
       </div>
     </div>
     <div class="crqnote"><span class="lead">In CRQ terms</span>This is <b>Fermi decomposition</b> plus an <b>assumption register</b>. Note the quality gradient, which is itself method: one input is barely an estimate (corpus data is a database query), one has internal test evidence, one is external expert elicitation, one is honest near-ignorance with the widest interval. A 90% interval is a tested claim, not a feeling: calibration training, a half-day exercise, brings experts to the point where their 90% intervals really do contain the truth about 90% of the time.</div>
@@ -396,14 +483,29 @@
 <!-- ACT 2 -->
 <section id="act2" class="reveal">
   <div class="wrap">
-    <div class="ghostnum" aria-hidden="true">2</div>
+    <div class="ghostnum" aria-hidden="true">Act 2</div>
     <div class="chip">CRQ step 2, continued · Estimates become distributions</div>
     <div class="actlabel"><h2>Q-Day becomes a bowl of chits</h2></div>
     <p>A range is a statement; a distribution is that statement made drawable. Write thousands of chits: most cluster near the likely year, some say the earliest plausible dates, a few stretch all the way to the latest. The bowl now is the expert belief, in physical form, and arguing about the single true year becomes visibly pointless. Draw from it.</p>
     <div class="panel">
       <div class="bowlrow">
         <div>
-          <div class="chit" id="chit"><small>your chit says</small><span id="chitval">draw one</span></div>
+          <div class="paper"><div class="chit" id="chit"><small>your chit says</small><span id="chitval">draw one</span></div></div>
+          <div class="bowlwrap" id="bowlwrap">
+            <svg id="bowlsvg" viewBox="0 0 220 150" width="200" role="img" aria-label="The Q-Day bowl, full of chits waiting to be drawn">
+              <path d="M26 46 A84 15 0 0 0 194 46 C190 84 156 102 110 102 C64 102 30 84 26 46 Z" transform="translate(4,5)" fill="rgba(20,31,56,.14)"/>
+              <ellipse cx="110" cy="46" rx="84" ry="15" fill="#0d1830"/>
+              <g transform="translate(64,22) rotate(-10)"><polygon points="0,1 20,-2 21.5,26 1.5,29" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/><line x1="4" y1="7" x2="16" y2="6.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/><line x1="4" y1="12" x2="13" y2="11.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/></g><g transform="translate(88,18) rotate(6)"><polygon points="0,1 20,-2 21.5,26 1.5,29" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/><line x1="4" y1="7" x2="16" y2="6.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/><line x1="4" y1="12" x2="13" y2="11.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/></g><g transform="translate(112,23) rotate(-3)"><polygon points="0,1 18,-2 19.5,23 1.5,26" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/><line x1="4" y1="7" x2="14" y2="6.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/></g><g transform="translate(131,17) rotate(11)"><polygon points="0,1 20,-2 21.5,26 1.5,29" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/><line x1="4" y1="7" x2="16" y2="6.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/><line x1="4" y1="12" x2="13" y2="11.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/></g><g transform="translate(150,24) rotate(-7)"><polygon points="0,1 18,-2 19.5,23 1.5,26" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/><line x1="4" y1="7" x2="14" y2="6.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/></g><g transform="translate(101,27) rotate(2)"><polygon points="0,1 17,-2 18.5,20 1.5,23" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/><line x1="4" y1="7" x2="13" y2="6.4" stroke="rgba(20,31,56,.42)" stroke-width="1.1"/></g>
+              <path d="M26 46 A84 15 0 0 0 194 46 C190 84 156 102 110 102 C64 102 30 84 26 46 Z" fill="#1b2a4d" stroke="#141f38" stroke-width="1.5"/>
+              <path d="M26 46 A84 15 0 0 1 194 46" fill="none" stroke="#141f38" stroke-width="1.5"/>
+              <ellipse cx="110" cy="46" rx="84" ry="15" fill="none" stroke="#3d5380" stroke-width="1" opacity=".8"/>
+              <path d="M33 63 Q110 88 187 63" stroke="#ED7D31" stroke-width="4.5" fill="none" opacity=".95"/>
+              <path d="M37 71 Q110 95 183 71" stroke="#ED7D31" stroke-width="1.6" fill="none" opacity=".65"/>
+              <path d="M43 58 Q49 79 66 91" stroke="rgba(255,255,255,.16)" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <ellipse cx="110" cy="103" rx="24" ry="5" fill="#141f38"/>
+              <text x="110" y="128" font-size="8.5" letter-spacing="1.6" fill="#5b6472" text-anchor="middle" font-family="Lato,Arial,sans-serif" font-weight="700">THE Q-DAY BOWL</text>
+            </svg>
+          </div>
           <div class="btnrow">
             <button id="btn-draw1">Draw a chit</button>
             <button class="ghost" id="btn-draw100">Draw 100</button>
@@ -423,7 +525,7 @@
 <!-- ACT 3 -->
 <section id="act3" class="reveal">
   <div class="wrap">
-    <div class="ghostnum" aria-hidden="true">3</div>
+    <div class="ghostnum" aria-hidden="true">Act 3</div>
     <div class="chip">CRQ step 3 · Monte Carlo, one trial at a time</div>
     <div class="actlabel"><h2>One possible future, in the ledger</h2></div>
     <p>Play out a single future under the current plan, which we'll call the roadmap: migration starts in 2031. The clerk draws one chit from every bowl, plus a fresh secrecy-lifetime chit for each year's harvest, then simply checks who won the race. Data harvested before migration completes is decryptable at Q-Day; a year's harvest only stops mattering if Q-Day arrives after that cohort has aged out of sensitivity. And because systems migrate progressively, the harvestable share of traffic tapers down across the migration window itself.</p>
@@ -432,9 +534,64 @@
         <button id="btn-year">Play one future</button>
         <button class="ghost" id="btn-year10">Play 10 futures</button>
       </div>
-      <div class="gatebox" id="gate">The clerk is waiting.</div>
-      <div class="ledgerhead"><span class="lt">The clerk's ledger · one row per simulated future</span></div>
-      <div class="ledger" id="ledger" aria-live="polite"></div>
+      <div class="chittray" id="chittray"></div>
+      <div class="note" id="traynote" style="display:none; margin-bottom:8px">The clerk's actual draw, one slip per bowl. The secrecy pile is a stack: a fresh chit for every year's harvest. Everything in the ledger row below follows from these slips by arithmetic alone.</div>
+      <div class="clerkrow">
+        <div class="clerkcol">
+          <svg id="clerksvg" viewBox="0 0 200 235" width="186" role="img" aria-label="The clerk at the desk: a chit raised in one hand, pen on the open ledger, rubber stamp and ink pad ready">
+            <rect x="16" y="164" width="172" height="42" transform="translate(4,4)" fill="rgba(20,31,56,.14)"/>
+            <path d="M78 104 Q56 98 50 80" stroke="#141f38" stroke-width="15" fill="none" stroke-linecap="round"/>
+            <path d="M78 104 Q56 98 50 80" stroke="#fdfcf7" stroke-width="11.5" fill="none" stroke-linecap="round"/>
+            <g transform="rotate(-8 50 60)">
+              <polygon points="36,44 62,41 63,64 37,67" transform="translate(2.5,2.5)" fill="rgba(20,31,56,.2)"/>
+              <polygon points="36,44 62,41 63,64 37,67" fill="#fdfcf7" stroke="#141f38" stroke-width="1.3"/>
+              <line x1="41" y1="51" x2="57" y2="49.6" stroke="rgba(20,31,56,.45)" stroke-width="1.1"/>
+              <line x1="41" y1="56" x2="54" y2="54.9" stroke="rgba(20,31,56,.45)" stroke-width="1.1"/>
+            </g>
+            <ellipse cx="50" cy="77" rx="6.5" ry="5.5" fill="#c08552" stroke="#141f38" stroke-width="1.3"/>
+            <circle cx="103" cy="56" r="23" fill="#c08552" stroke="#141f38" stroke-width="1.5"/>
+            <path d="M81 50 Q82 32 103 31 Q124 32 125 50 Q120 38 103 38 Q86 38 81 50 Z" fill="#141f38"/>
+            <circle cx="80.5" cy="58" r="4" fill="#c08552" stroke="#141f38" stroke-width="1.2"/>
+            <circle cx="125.5" cy="58" r="4" fill="#c08552" stroke="#141f38" stroke-width="1.2"/>
+            <circle cx="94" cy="57" r="7.5" fill="rgba(255,255,255,.25)" stroke="#141f38" stroke-width="1.6"/>
+            <circle cx="113" cy="57" r="7.5" fill="rgba(255,255,255,.25)" stroke="#141f38" stroke-width="1.6"/>
+            <line x1="101.5" y1="57" x2="105.5" y2="57" stroke="#141f38" stroke-width="1.6"/>
+            <line x1="86.5" y1="57" x2="81" y2="56" stroke="#141f38" stroke-width="1.6"/>
+            <line x1="120.5" y1="57" x2="125" y2="56" stroke="#141f38" stroke-width="1.6"/>
+            <path d="M97 69 Q103 72 109 69" stroke="#141f38" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <rect x="97" y="77" width="12" height="9" fill="#c08552" stroke="#141f38" stroke-width="1.2"/>
+            <path d="M72 96 Q103 86 134 96 L142 164 L64 164 Z" fill="#1b2a4d" stroke="#141f38" stroke-width="1.5"/>
+            <path d="M95 92 L103 104 L111 92 Q103 89 95 92 Z" fill="#fdfcf7" stroke="#141f38" stroke-width="1.2"/>
+            <path d="M132 104 Q152 118 147 148" stroke="#141f38" stroke-width="15" fill="none" stroke-linecap="round"/>
+            <path d="M132 104 Q152 118 147 148" stroke="#fdfcf7" stroke-width="11.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="147" cy="150" rx="6.5" ry="5.5" fill="#c08552" stroke="#141f38" stroke-width="1.3"/>
+            <line x1="147" y1="150" x2="157" y2="161" stroke="#ED7D31" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M16 164 L188 164 L182 156 L22 156 Z" fill="#24365e" stroke="#141f38" stroke-width="1.3"/>
+            <g transform="translate(116,142) rotate(-2) scale(1.12)">
+              <polygon points="0,18 26,12 52,18 52,24 26,19 0,24" fill="#141f38"/>
+              <polygon points="2,17 26,12 26,18 3,23" fill="#fdfcf7" stroke="#141f38" stroke-width="1.1"/>
+              <polygon points="26,12 50,17 49,23 26,18" fill="#fdfcf7" stroke="#141f38" stroke-width="1.1"/>
+              <line x1="31" y1="14.5" x2="31.5" y2="20.5" stroke="rgba(217,108,108,.85)" stroke-width="1"/>
+              <line x1="7" y1="17.5" x2="20" y2="15" stroke="rgba(20,31,56,.45)" stroke-width="0.9"/>
+              <line x1="8" y1="20" x2="19" y2="17.7" stroke="rgba(20,31,56,.45)" stroke-width="0.9"/>
+              <line x1="35" y1="15.5" x2="45" y2="17.5" stroke="rgba(20,31,56,.45)" stroke-width="0.9"/>
+            </g>
+            <g transform="translate(32,147)">
+              <rect x="0" y="8" width="18" height="5" rx="1.5" fill="#141f38"/>
+              <rect x="6.5" y="0" width="5" height="9" rx="2" fill="#141f38"/>
+              <rect x="24" y="8" width="16" height="5" rx="1.5" fill="#ED7D31" stroke="#141f38" stroke-width="1.1"/>
+            </g>
+            <rect x="16" y="164" width="172" height="42" fill="#1b2a4d" stroke="#141f38" stroke-width="1.5"/>
+            <line x1="16" y1="172" x2="188" y2="172" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+            <text x="100" y="226" font-size="9" letter-spacing="2" fill="#5b6472" text-anchor="middle" font-family="Lato,Arial,sans-serif" font-weight="700">THE CLERK</text>
+          </svg>
+        </div>
+        <div>
+          <div class="gatebox" id="gate">The clerk is waiting.</div>
+          <div class="ledgerhead"><span class="lt">The clerk's ledger · one row per simulated future</span></div>
+          <div class="ledger" id="ledger" aria-live="polite"></div>
+        </div>
+      </div>
     </div>
     <div class="crqnote"><span class="lead">In CRQ terms</span>Each ledger row is <b>one Monte Carlo trial</b>: a draw from every input distribution (the secrecy clock drawn afresh for every yearly harvest cohort), pushed through the scenario's arithmetic, and recorded. The simulation adds no randomness of its own; it propagates the uncertainty the experts already admitted to, instead of collapsing every range to a midpoint and pretending the result is exact.</div>
   </div>
@@ -443,7 +600,7 @@
 <!-- ACT 4 -->
 <section id="act4" class="reveal">
   <div class="wrap">
-    <div class="ghostnum" aria-hidden="true">4</div>
+    <div class="ghostnum" aria-hidden="true">Act 4</div>
     <div class="chip">CRQ step 4 · The loss distribution and its tail</div>
     <div class="actlabel"><h2>Twenty thousand futures</h2></div>
     <p>One future tells you nothing; "Q-Day is decades away" and "Q-Day is imminent" are both single chits. So let the clerk run the roadmap plan through every chit in the bowl and count. Every output below is just counting in the finished ledger.</p>
@@ -457,6 +614,7 @@
       <label class="moneylab"><input type="checkbox" class="moneycheck" id="mt-4"> Show losses in rupees, at Rs. <input type="number" id="in-clo" value="2000" min="100" max="100000" step="100" style="width:78px"> to <input type="number" id="in-chi" value="20000" min="500" max="1000000" step="500" style="width:88px"> per record exposed. The monetisation is one multiplication, and the cost range is the widest, least-evidenced input on the page; which is the argument for the records unit.</label>
       <div class="counters">
         <div class="counter"><div class="v" id="c-years">0</div><div class="k">Futures simulated</div></div>
+        <div class="counter"><div class="v" id="c-chits">0</div><div class="k">Chits pulled from bowls</div></div>
         <div class="counter"><div class="v accent" id="c-pany">–</div><div class="k">Futures with exposure</div></div>
         <div class="counter"><div class="v" id="c-beats">–</div><div class="k">Migration beats Q-Day</div></div>
         <div class="counter"><div class="v" id="c-avg">–</div><div class="k">Typical exposure</div></div>
@@ -492,7 +650,7 @@
 <!-- ACT 5 -->
 <section id="act5" class="reveal">
   <div class="wrap">
-    <div class="ghostnum" aria-hidden="true">5</div>
+    <div class="ghostnum" aria-hidden="true">Act 5</div>
     <div class="chip">CRQ step 5 · Decision analysis: comparing risk treatments</div>
     <div class="actlabel"><h2>The decision: four strategies, same bowl</h2></div>
     <p>This is the step the entire method exists for. Four strategies are on the table, and in a qualitative discussion all four sound defensible, including the sophisticated one: surely we'll get warning. Replay the same twenty thousand futures under each and they separate immediately. Note what you are about to see: no strategy buys zero, because anything harvested before migration completes remains a future liability. What you are choosing is the size of the eventual exposure, and whether your migration finishes before the deadline you don't control.</p>
@@ -521,11 +679,12 @@
     <div class="panel">
       <div class="appetite">
         <span class="aplead">Risk appetite</span>
-        Migration must beat Q-Day in at least <input type="number" id="ap-beats" value="95" min="50" max="100" step="1">% of futures, and the 1-in-20 worst future must stay under <input type="number" id="ap-p95" value="2" min="0.1" max="50" step="0.1"> lakh records. <span class="note" style="font-size:12px">(Appetite is defined in records, the institution's chosen unit, whatever the display toggle says.)</span>
+        Migration must beat Q-Day in at least <input type="number" id="ap-beats" value="95" min="50" max="100" step="1">% of futures, and the 1-in-20 worst future must stay under <input type="number" id="ap-p95" value="1" min="0.05" max="50" step="0.05"> lakh person-records. <span class="note" style="font-size:12px">(Appetite is defined in records, the institution's chosen unit, whatever the display toggle says.)</span>
       </div>
       <label class="moneylab" style="margin-bottom:8px"><input type="checkbox" class="moneycheck" id="mt-5"> Show losses in rupees (cost range is set in Act 4)</label>
       <div class="note" style="margin-bottom:10px">Self-contained and seeded: this replay runs fresh whether or not the earlier acts were clicked, and produces identical numbers on every machine. Each future's chits are drawn once and handed to all four strategies, so "same bowl" is literal: every future is the identical world, lived four ways.</div>
       <div class="btnrow"><button id="btn-compare">Replay 20,000 futures under all four</button></div>
+      <div class="note" id="exc-chits" style="margin-bottom:6px"></div>
       <div class="chartwrap">
         <svg id="excchart" viewBox="0 0 840 290" width="100%" role="img" aria-label="Exceedance curves of records exposed"></svg>
         <div class="tip" id="tip2"></div>
@@ -581,7 +740,7 @@ const model = {
   qMin:4, qMode:11, qMax:25,
   mMin:2, mMode:4, mMax:8,
   lMin:8, lMode:15, lMax:25,
-  hLo:5000, hHi:50000,
+  hLo:1000, hHi:30000,
   cLo:2000, cHi:20000,
 };
 let harvestS = lognCI(model.hLo, model.hHi);
@@ -664,13 +823,37 @@ function playFuture(strategy){ return evalStrategy(drawWorld(), strategy); }
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = id => document.getElementById(id);
-const lakh = r => (r/1e5).toFixed(r<1e5?2:1)+" lakh";
+const lakh = r => r>=1e5 ? (r/1e5).toFixed(r<1e6?2:1)+" lakh" : Math.round(r).toLocaleString("en-IN");
 const crore = v => "Rs. "+(v/1e7).toFixed(v<1e7?2:1)+" cr";
 const fmtU = v => moneyMode ? crore(v) : lakh(v);
-const UB = () => moneyMode ? 1e7 : 1e5;
-const uShort = () => moneyMode ? "cr" : "L";
+const axisUnit = xmax => moneyMode ? {ub:1e7, suf:"cr"} : (xmax>=2e5 ? {ub:1e5, suf:"L"} : {ub:1e3, suf:"k"});
 const yr = t => Math.round(YEAR0 + t);
 function qArr(a,p){ if(!a.length) return 0; const s=Float64Array.from(a).sort(); return s[Math.min(s.length-1,Math.floor(p*s.length))]; }
+
+/* ---------- chit accounting : every trial is just pulls from bowls ---------- */
+let chitCount = 0;                                /* chits pulled in the current ledger */
+const chitsPerWorld = w0 => 6 + w0.Ls.length;     /* q, dur, rate, cost, crash, warn + one secrecy chit per cohort */
+function renderChits(w0){
+  const t=$("chittray"); if(!t) return;
+  let lmin=Infinity, lmax=-Infinity;
+  for(const v of w0.Ls){ if(v<lmin)lmin=v; if(v>lmax)lmax=v; }
+  const items=[
+    ["Q-DAY", String(yr(w0.q))],
+    ["MIGRATE", w0.dur.toFixed(1)+" yrs"],
+    ["HARVEST", Math.round(w0.rate).toLocaleString("en-IN")+"/yr"],
+    [`SECRECY · ×${w0.Ls.length}`, lmin.toFixed(0)+" to "+lmax.toFixed(0)+" yrs", true],
+  ];
+  if(moneyMode) items.push(["COST / RECORD", "Rs. "+Math.round(w0.cost).toLocaleString("en-IN")]);
+  t.innerHTML = items.map((it,i)=>
+    `<span class="paper sm${it[2]?" stackp":""}"><span class="mchit" style="--rot:${(i%2? 1.8 : -2.2)}deg; animation-delay:${(i*0.13).toFixed(2)}s"><small>${it[0]}</small>${it[1]}</span></span>`
+  ).join("");
+  $("traynote").style.display="block";
+}
+function clearChits(){
+  chitCount=0;
+  const t=$("chittray"); if(t) t.innerHTML="";
+  $("traynote").style.display="none";
+}
 
 /* ---------- shareable URL state ---------- */
 const URLKEYS=[["q0","in-qmin"],["q1","in-qmode"],["q2","in-qmax"],
@@ -722,7 +905,7 @@ function readInputs(){
   if(hhi<=hlo) hhi=hlo*2, $("in-hhi").value=hhi;
   $("in-hlo").value=hlo;
   model.hLo=hlo; model.hHi=hhi; harvestS = lognCI(hlo,hhi);
-  $("d-harv").textContent = `${hlo.toLocaleString("en-IN")} to ${hhi.toLocaleString("en-IN")} records / yr`;
+  $("d-harv").textContent = `${hlo.toLocaleString("en-IN")} to ${hhi.toLocaleString("en-IN")} person-records / yr`;
   let clo=Math.max(50,Math.round(+$("in-clo").value)), chi=Math.round(+$("in-chi").value);
   if(chi<=clo) chi=clo*2, $("in-chi").value=chi;
   $("in-clo").value=clo;
@@ -740,9 +923,9 @@ function setInputs(v){
   readInputs();
 }
 const PRESETS = {
-  cons:[2030,2037,2051, 2,4,8, 8,15,25, 5000,50000],
-  skep:[2035,2046,2065, 2,4,8, 8,15,25, 2000,20000],
-  hawk:[2028,2033,2042, 3,5,10, 10,20,30, 10000,100000],
+  cons:[2030,2037,2051, 2,4,8, 8,15,25, 1000,30000],
+  skep:[2035,2046,2065, 2,4,8, 8,15,25, 500,10000],
+  hawk:[2028,2033,2042, 3,5,10, 10,20,30, 3000,80000],
 };
 $("btn-reset").addEventListener("click",()=>setInputs(PRESETS.cons));
 $("pre-cons").addEventListener("click",()=>{ setInputs(PRESETS.cons); doCompare(); });
@@ -751,10 +934,10 @@ $("pre-hawk").addEventListener("click",()=>{ setInputs(PRESETS.hawk); doCompare(
 
 function invalidate(){
   bowl.draws=[]; renderBowl(); $("drawcount").textContent="0 chits drawn (beliefs changed, bowl refilled)";
-  sim.reset(); convPts.length=0; renderCounters(); renderHist(); renderConv();
+  sim.reset(); convPts.length=0; clearChits(); renderCounters(); renderHist(); renderConv();
   $("envelope").style.display="none";
   $("tornchart").style.display="none"; $("tornchart").innerHTML=""; $("tornnote").style.display="none";
-  excData=null;
+  excData=null; $("exc-chits").textContent="";
   $("cmptable").style.display="none"; $("verdict").style.display="none"; $("excchart").innerHTML="";
   ledgerClear("Beliefs changed. The old ledger is void; the clerk starts fresh.");
 }
@@ -796,7 +979,20 @@ function drawChits(n){
   for(let i=0;i<n;i++){ last = pertS(model.qMin,model.qMode,model.qMax); bowl.draws.push(last); }
   const c=$("chit");
   $("chitval").textContent = yr(last);
-  if(!reduceMotion){ c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop"); }
+  if(!reduceMotion){
+    /* a slip leaves the bowl and rises toward the reading */
+    const bw=$("bowlwrap");
+    if(bw){
+      const fly=document.createElement("span");
+      fly.className="flyp";
+      fly.innerHTML='<span class="flyin"></span>';
+      bw.appendChild(fly);
+      setTimeout(()=>{ if(fly.parentNode) fly.parentNode.removeChild(fly); }, 620);
+    }
+    const bs=$("bowlsvg");
+    if(bs){ bs.classList.remove("shake"); bs.getBoundingClientRect(); bs.classList.add("shake"); }
+    c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop");
+  }
   $("drawcount").textContent = bowl.draws.length.toLocaleString()+" chits drawn";
   renderBowl();
 }
@@ -847,8 +1043,13 @@ function printFuture(f, animate){
     ledgerLine(`<span class="yr">Future ${String(futNo).padStart(4,"0")}</span><span class="stamp safe">safe</span><span>Q-Day ${yr(f.q)} · PQC done ${yr(f.mig)} · harvest aged out</span>`,"quiet");
   }
 }
-$("btn-year").addEventListener("click",()=>{ const f=playFuture("road"); printFuture(f,true); sim.add(f); renderCounters(); renderHist(); });
-$("btn-year10").addEventListener("click",()=>{ for(let i=0;i<10;i++){const f=playFuture("road"); printFuture(f,i===9); sim.add(f);} renderCounters(); renderHist(); });
+function clerkNudge(){
+  if(reduceMotion) return;
+  const cs=$("clerksvg");
+  if(cs){ cs.classList.remove("shake"); cs.getBoundingClientRect(); cs.classList.add("shake"); }
+}
+$("btn-year").addEventListener("click",()=>{ const w0=drawWorld(); const f=evalStrategy(w0,"road"); chitCount+=chitsPerWorld(w0); renderChits(w0); clerkNudge(); printFuture(f,true); sim.add(f); renderCounters(); renderHist(); });
+$("btn-year10").addEventListener("click",()=>{ let w0,f; for(let i=0;i<10;i++){ w0=drawWorld(); f=evalStrategy(w0,"road"); chitCount+=chitsPerWorld(w0); printFuture(f,i===9); sim.add(f);} renderChits(w0); clerkNudge(); renderCounters(); renderHist(); });
 
 /* ---------- ACT 4 : mass simulation (roadmap strategy) ---------- */
 const sim = {
@@ -865,13 +1066,13 @@ let running=false;
 function massRun(target){
   if(running) return; running=true;
   rand = mulberry32(SEED);          /* reseed: every mass run reproduces exactly */
-  sim.reset(); convPts.length=0; ledgerClear("Seeded run begins. Same inputs, same numbers, any machine.");
+  sim.reset(); convPts.length=0; chitCount=0; ledgerClear("Seeded run begins. Same inputs, same numbers, any machine.");
   let done=0;
   const batch = reduceMotion ? target : 800;
   function step(){
     const todo=Math.min(batch, target-done);
     for(let i=0;i<todo;i++){
-      const f=playFuture("road"); futNo++; sim.add(f);
+      const w0=drawWorld(); const f=evalStrategy(w0,"road"); chitCount+=chitsPerWorld(w0); futNo++; sim.add(f);
       if((sim.n()%163)===0){
         if(f.recs>0) ledgerLine(`<span class="yr">Future ${String(futNo).padStart(5,"0")}</span><span class="stamp">exposed</span><span>Q-Day ${yr(f.q)} · ${lakh(f.recs)} records</span>`,"hit");
         else ledgerLine(`<span class="yr">Future ${String(futNo).padStart(5,"0")}</span><span class="stamp safe">safe</span><span>Q-Day ${yr(f.q)}</span>`,"quiet");
@@ -887,11 +1088,12 @@ function massRun(target){
 }
 $("btn-run1k").addEventListener("click",()=>massRun(1000));
 $("btn-run20k").addEventListener("click",()=>massRun(20000));
-$("btn-clear").addEventListener("click",()=>{ sim.reset(); convPts.length=0; ledgerClear("Ledger cleared."); renderCounters(); renderHist(); renderConv(); $("envelope").style.display="none"; });
+$("btn-clear").addEventListener("click",()=>{ sim.reset(); convPts.length=0; clearChits(); ledgerClear("Ledger cleared."); renderCounters(); renderHist(); renderConv(); $("envelope").style.display="none"; });
 
 function renderCounters(){
   const n=sim.n();
   $("c-years").textContent=n.toLocaleString();
+  $("c-chits").textContent=chitCount.toLocaleString("en-IN");
   $("c-pany").textContent = n? (sim.exposed/n*100).toFixed(1)+"%" : "–";
   $("c-beats").textContent = n? (sim.beats/n*100).toFixed(0)+"%" : "–";
   $("c-avg").textContent = n>=200? fmtU(sim.med()) : "–";
@@ -901,7 +1103,8 @@ function renderHist(){
   const svg=$("histchart"); if(!sim.n()){svg.innerHTML="";$("histnote").textContent="Run the simulation to build the picture.";return;}
   const W=840,H=230,Lx=46,B=190,R=14;
   const data=sim.arr();
-  const xmax=Math.max(2*UB(), sim.q(0.995)*1.1);
+  const xmax=Math.max(moneyMode?2e7:2e4, sim.q(0.995)*1.1);
+  const AU=axisUnit(xmax);
   const bins=24; const counts=new Array(bins+1).fill(0);
   for(const d of data){ if(d<=0){counts[0]++;continue;} counts[1+Math.min(bins-1,Math.floor(d/xmax*bins))]++; }
   const n=sim.n();
@@ -915,23 +1118,23 @@ function renderHist(){
     if(safe && frac>0) s+=`<text x="${Lx+bw/2}" y="${B-h-8}" font-size="12" font-weight="700" fill="#16243f" text-anchor="middle">${(frac*100).toFixed(0)}%</text>`;
   }
   s+=`<line x1="${Lx}" y1="${B}" x2="${W-R}" y2="${B}" stroke="#16243f" stroke-width="1.5"/>`;
-  const stepv=Math.ceil(xmax/8/UB())*UB();
+  const stepv=Math.ceil(xmax/8/AU.ub)*AU.ub;
   for(let t=stepv;t<=xmax;t+=stepv){
     const x=Lx+bw+ t/xmax*(W-Lx-R-bw);
-    s+=`<text x="${x}" y="${B+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/UB()).toFixed(0)}${uShort()}</text>`;
+    s+=`<text x="${x}" y="${B+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/AU.ub).toFixed(0)}${AU.suf}</text>`;
   }
   s+=`<text x="${Lx+bw/2}" y="${B+18}" font-size="11" fill="#5b6472" text-anchor="middle">safe</text>`;
   if(sim.n()>=200){
     const p95=sim.q(0.95); const x=Lx+bw+p95/xmax*(W-Lx-R-bw);
     s+=`<line x1="${x}" y1="${B}" x2="${x}" y2="30" stroke="#ED7D31" stroke-width="2" stroke-dasharray="5 4"/>`;
-    s+=`<text x="${Math.min(x+6,W-230)}" y="42" font-size="12" font-weight="700" fill="#ED7D31">1-in-20 worst future: ${fmtU(p95)}</text>`;
+    s+=`<text x="${Math.min(x+6,W-230)}" y="42" font-size="12" font-weight="700" fill="#b85c1a">1-in-20 worst future: ${fmtU(p95)}</text>`;
   }
   svg.innerHTML=s;
   const unitSent = moneyMode
     ? "The axis is in crore rupees of loss: the same records, monetised by that one extra (and widest) input."
-    : "The axis is in lakh records of applicant data decrypted retroactively.";
+    : `The axis is in ${AU.suf==="L"?"lakh":"thousands of"} person-records decrypted retroactively.`;
   $("histnote").innerHTML=`The green sliver is the only fully safe path, and look how thin it is: in just <b>${(counts[0]/n*100).toFixed(0)}% of futures</b> does Q-Day arrive late enough for every harvest cohort to have aged out. The blue hill is the rest. Heights are square-root scaled. ${unitSent}`;
-  attachTip(svg,$("tip1"),(i)=>{ if(i===0) return `Fully safe: ${(counts[0]/n*100).toFixed(1)}% of futures`; const lo=((i-1)*xmax/bins/UB()).toFixed(1), hi=(i*xmax/bins/UB()).toFixed(1); return `${lo} to ${hi} ${moneyMode?"crore":"lakh records"}: ${(counts[i]/n*100).toFixed(2)}% of futures`; });
+  attachTip(svg,$("tip1"),(i)=>{ if(i===0) return `Fully safe: ${(counts[0]/n*100).toFixed(1)}% of futures`; const lo=fmtU((i-1)*xmax/bins), hi=fmtU(i*xmax/bins); return `${lo} to ${hi}${moneyMode?"":" records"}: ${(counts[i]/n*100).toFixed(2)}% of futures`; });
 }
 /* hover and tap both work: pointer events cover mouse and touch */
 function attachTip(svg,tip,msg){
@@ -958,10 +1161,11 @@ function renderConv(target){
   const val=pt=> moneyMode? pt.m : pt.r;
   const nmax=Math.max(target||0, convPts[convPts.length-1].n);
   const pmax=Math.max(...convPts.map(val))*1.15 || 1;
+  const AU=axisUnit(pmax);
   let s="";
   for(let g=0;g<=2;g++){
     const y=B-g/2*(B-T);
-    s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="10.5" fill="#5b6472" text-anchor="end">${(g/2*pmax/UB()).toFixed(1)}${uShort()}</text>`;
+    s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="10.5" fill="#5b6472" text-anchor="end">${(g/2*pmax/AU.ub).toFixed(1)}${AU.suf}</text>`;
   }
   const fin=val(convPts[convPts.length-1]);
   const yf=B-fin/pmax*(B-T);
@@ -977,7 +1181,7 @@ function renderConv(target){
     const x=Lx+t*(W-Lx-R);
     s+=`<text x="${x}" y="${B+16}" font-size="10.5" fill="#5b6472" text-anchor="middle">${Math.round(t*nmax).toLocaleString()}</text>`;
   }
-  s+=`<text x="${W-R}" y="${Math.max(yf-6,T+8)}" font-size="11" font-weight="700" fill="#ED7D31" text-anchor="end">P95 settles at ${fmtU(fin)}</text>`;
+  s+=`<text x="${W-R}" y="${Math.max(yf-6,T+8)}" font-size="11" font-weight="700" fill="#b85c1a" text-anchor="end">P95 settles at ${fmtU(fin)}</text>`;
   svg.innerHTML=s;
 }
 
@@ -1031,13 +1235,14 @@ function renderTorn(items, base){
   svg.setAttribute("viewBox",`0 0 ${W} ${B+34}`);
   const xmax=Math.max(...items.map(i=>i.hi), base)*1.12;
   const X=v=>Lx+v/xmax*(W-Lx-R);
+  const tub = xmax>=2e5 ? 1e5 : 1e3, tsuf = xmax>=2e5 ? "L" : "k";
   let s="";
-  const stepv=Math.ceil(xmax/6/1e5)*1e5 || 1e5;
+  const stepv=Math.ceil(xmax/6/tub)*tub || tub;
   for(let t=0;t<=xmax;t+=stepv){
-    s+=`<line x1="${X(t)}" y1="${T-8}" x2="${X(t)}" y2="${B}" stroke="#ece7da"/><text x="${X(t)}" y="${B+16}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/1e5).toFixed(0)}L</text>`;
+    s+=`<line x1="${X(t)}" y1="${T-8}" x2="${X(t)}" y2="${B}" stroke="#ece7da"/><text x="${X(t)}" y="${B+16}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/tub).toFixed(0)}${tsuf}</text>`;
   }
   s+=`<line x1="${X(base)}" y1="${T-12}" x2="${X(base)}" y2="${B}" stroke="#ED7D31" stroke-width="2" stroke-dasharray="5 4"/>`;
-  s+=`<text x="${Math.min(X(base)+6,W-150)}" y="${T-2}" font-size="11.5" font-weight="700" fill="#ED7D31">base P95: ${lakh(base)}</text>`;
+  s+=`<text x="${Math.min(X(base)+6,W-150)}" y="${T-2}" font-size="11.5" font-weight="700" fill="#b85c1a">base P95: ${lakh(base)}</text>`;
   items.forEach((it,i)=>{
     const y=T+i*rowH+rowH/2;
     s+=`<text x="${Lx-12}" y="${y+4}" font-size="13" font-weight="700" fill="#16243f" text-anchor="end">${it.name}</text>`;
@@ -1067,8 +1272,10 @@ function renderTorn(items, base){
 function runComparison(n){
   const acc = {};
   for(const s of STRATEGIES) acc[s] = {recs:new Float64Array(n), loss:new Float64Array(n), exposed:0, beats:0};
+  let chits=0;
   for(let i=0;i<n;i++){
     const world = drawWorld();
+    chits += chitsPerWorld(world);
     for(const s of STRATEGIES){
       const f = evalStrategy(world, s);
       const o = acc[s];
@@ -1085,12 +1292,14 @@ function runComparison(n){
             medR:qr(0.5), p95R:qr(0.95), p99R:qr(0.99),
             medM:qm(0.5), p95M:qm(0.95), p99M:qm(0.99)};
   }
+  out._chits = chits;
   return out;
 }
 let excData=null;
 function doCompare(){
   rand = mulberry32(SEED+1);
   excData = runComparison(20000);
+  $("exc-chits").textContent = `Bowls emptied: ${excData._chits.toLocaleString("en-IN")} chits pulled, and each world's chits served all four strategies.`;
   renderExc(); renderCmp();
 }
 $("btn-compare").addEventListener("click",doCompare);
@@ -1101,7 +1310,8 @@ function renderExc(){
   const {wait,warn,road,now}=excData;
   const A=p=> moneyMode? p.lossS : p.recsS;
   const svg=$("excchart"); const W=840,Bm=246,R=16,T=18,Lx=52;
-  const xmax=Math.max(4*UB(), (moneyMode?wait.p99M:wait.p99R)*1.15);
+  const xmax=Math.max(moneyMode?4e7:4e4, (moneyMode?wait.p99M:wait.p99R)*1.15);
+  const AU=axisUnit(xmax);
   const ymax=1.02;
   function exc(arr,x){
     let lo=0,hi=arr.length;
@@ -1117,9 +1327,9 @@ function renderExc(){
     return `<path d="${p}" fill="none" stroke="${color}" stroke-width="2.6" ${dash?`stroke-dasharray="${dash}"`:""} stroke-linecap="round"/>`;
   }
   let s="";
-  for(let g=0;g<=4;g++){
-    const y=Bm-g/4*(Bm-T);
-    s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="11" fill="#5b6472" text-anchor="end">${(g/4*ymax*100).toFixed(0)}%</text>`;
+  for(const pct of [0,25,50,75,100]){
+    const y=Bm-(pct/100)/ymax*(Bm-T);
+    s+=`<line x1="${Lx}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#ece7da"/><text x="${Lx-8}" y="${y+4}" font-size="11" fill="#5b6472" text-anchor="end">${pct}%</text>`;
   }
   /* appetite ceiling: defined in records, so drawn only in records view */
   if(!moneyMode){
@@ -1127,17 +1337,17 @@ function renderExc(){
     if(apv>0 && apv<xmax){
       const x=Lx+apv/xmax*(W-Lx-R);
       s+=`<line x1="${x}" y1="${Bm}" x2="${x}" y2="${T-4}" stroke="#ED7D31" stroke-width="2" stroke-dasharray="2 5"/>`;
-      s+=`<text x="${Math.min(x+6,W-170)}" y="${T+8}" font-size="11.5" font-weight="700" fill="#ED7D31">appetite ceiling: ${(+$("ap-p95").value).toFixed(1)} lakh</text>`;
+      s+=`<text x="${Math.min(x+6,W-170)}" y="${T+8}" font-size="11.5" font-weight="700" fill="#b85c1a">appetite ceiling: ${(+$("ap-p95").value).toFixed(1)} lakh</text>`;
     }
   }
   s+=path(A(wait),"#16243f")+path(A(warn),"#3a7d44","2 5")+path(A(road),"#5b6472","7 5")+path(A(now),"#ED7D31");
   s+=`<line x1="${Lx}" y1="${Bm}" x2="${W-R}" y2="${Bm}" stroke="#16243f" stroke-width="1.5"/>`;
-  const stepv=Math.ceil(xmax/9/UB())*UB();
+  const stepv=Math.ceil(xmax/9/AU.ub)*AU.ub;
   for(let t=0;t<=xmax;t+=stepv){
     const x=Lx+t/xmax*(W-Lx-R);
-    s+=`<text x="${x}" y="${Bm+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/UB()).toFixed(0)}${uShort()}</text>`;
+    s+=`<text x="${x}" y="${Bm+18}" font-size="11" fill="#5b6472" text-anchor="middle">${(t/AU.ub).toFixed(0)}${AU.suf}</text>`;
   }
-  s+=`<text x="${(Lx+W-R)/2}" y="${Bm+36}" font-size="12" fill="#5b6472" text-anchor="middle">A future worse than this ${moneyMode?"many crore rupees of loss":"many lakh records decrypted"} ...</text>`;
+  s+=`<text x="${(Lx+W-R)/2}" y="${Bm+36}" font-size="12" fill="#5b6472" text-anchor="middle">A future worse than this ${moneyMode?"many crore rupees of loss":(AU.suf==="L"?"many lakh person-records decrypted":"many thousand person-records decrypted")} ...</text>`;
   svg.innerHTML=s;
   const tip=$("tip2");
   const handle=e=>{
@@ -1146,7 +1356,7 @@ function renderExc(){
     if(px<Lx||px>W-R){tip.style.opacity=0;return;}
     const x=(px-Lx)/(W-Lx-R)*xmax;
     tip.style.opacity=1; tip.style.left=(e.clientX-r.left)+"px"; tip.style.top=(e.clientY-r.top)+"px";
-    tip.textContent=`Worse than ${(x/UB()).toFixed(1)} ${moneyMode?"cr":"lakh"}: wait ${(exc(A(wait),x)*100).toFixed(0)}% · warning ${(exc(A(warn),x)*100).toFixed(0)}% · roadmap ${(exc(A(road),x)*100).toFixed(0)}% · now ${(exc(A(now),x)*100).toFixed(0)}%`;
+    tip.textContent=`Worse than ${fmtU(x)}: wait ${(exc(A(wait),x)*100).toFixed(0)}% · warning ${(exc(A(warn),x)*100).toFixed(0)}% · roadmap ${(exc(A(road),x)*100).toFixed(0)}% · now ${(exc(A(now),x)*100).toFixed(0)}%`;
   };
   svg.onpointermove=handle;
   svg.onpointerdown=handle;
