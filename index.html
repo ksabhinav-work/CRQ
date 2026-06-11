@@ -871,14 +871,6 @@ const URLKEYS=[["q0","in-qmin"],["q1","in-qmode"],["q2","in-qmax"],
   ["l0","in-lmin"],["l1","in-lmode"],["l2","in-lmax"],
   ["h0","in-hlo"],["h1","in-hhi"],["c0","in-clo"],["c1","in-chi"],
   ["ab","ap-beats"],["ap","ap-p95"]];
-function syncURL(){
-  try{
-    const p=new URLSearchParams();
-    URLKEYS.forEach(([k,id])=>p.set(k,$(id).value));
-    if(moneyMode) p.set("rs","1");
-    history.replaceState(null,"","?"+p.toString());
-  }catch(e){/* file:// or sandboxed contexts may refuse; sharing degrades gracefully */}
-}
 function applyURL(){
   try{
     const p=new URLSearchParams(location.search);
@@ -917,7 +909,6 @@ function readInputs(){
   $("in-clo").value=clo;
   model.cLo=clo; model.cHi=chi; costS = lognCI(clo,chi);
   invalidate();
-  syncURL();
 }
 function markPreset(id){
   try{ document.querySelectorAll(".pbtn").forEach(b=>b.classList.toggle("active", b.id===id)); }catch(e){}
@@ -956,7 +947,6 @@ function setMoney(on){
   document.querySelectorAll(".moneycheck").forEach(c=>{ c.checked = moneyMode; });
   renderCounters(); renderHist(); renderConv();
   if(excData){ renderExc(); renderCmp(); }
-  syncURL();
 }
 document.querySelectorAll(".moneycheck").forEach(c=>c.addEventListener("change",e=>setMoney(e.target.checked)));
 
@@ -1291,7 +1281,7 @@ function doCompare(){
   renderExc(); renderCmp();
 }
 $("btn-compare").addEventListener("click",doCompare);
-["ap-beats","ap-p95"].forEach(id=>$(id).addEventListener("change",()=>{ if(excData){ renderExc(); renderCmp(); } syncURL(); }));
+["ap-beats","ap-p95"].forEach(id=>$(id).addEventListener("change",()=>{ if(excData){ renderExc(); renderCmp(); } }));
 
 function renderExc(){
   if(!excData) return;
