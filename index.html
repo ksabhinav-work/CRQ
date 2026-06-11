@@ -27,7 +27,7 @@
   button, input, .eyebrow, .chip, .chipf, .railtitle, .rail a,
   .card .tag, .card .edit, .counter .k, .ledgerhead .lt, .legend,
   .opt .price, .tip, table.cmp, .crqnote .lead, .scen-grid .f .k,
-  .subhead, .appetite, .stickybar{
+  .subhead, .appetite{
     font-family:var(--ui);
   }
   ::selection{background:var(--orange); color:#fff}
@@ -97,6 +97,30 @@
   .subhead{
     font-size:9.5px; letter-spacing:.22em; text-transform:uppercase;
     color:var(--slate); font-weight:700; margin:4px 0 8px;
+  }
+
+  /* worldview preset bar */
+  .presetbar{
+    background:var(--panel); border:1.5px solid var(--line); border-radius:4px;
+    padding:14px 16px 13px; margin-top:16px; position:relative; z-index:1;
+  }
+  .presetbar .pb-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:11px}
+  .presetbar .pb-reset{padding:3px 11px; font-size:12px; border:1px solid var(--line); background:transparent; color:var(--slate)}
+  .presetbar .pb-reset:hover{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .pb-btns{display:flex; flex-wrap:wrap; margin-bottom:11px}
+  .pbtn{background:transparent; color:var(--ink); border:1.5px solid var(--ink); padding:8px 18px; font-size:13.5px; border-radius:0}
+  .pbtn + .pbtn{border-left:none}
+  .pbtn:first-child{border-radius:2px 0 0 2px}
+  .pbtn:last-child{border-radius:0 2px 2px 0}
+  .pbtn:hover{background:var(--blue); color:#fff; border-color:var(--blue)}
+  .pbtn.active{background:var(--ink); color:#fff}
+  .presetbar > .note{margin:0}
+  @media (max-width:520px){
+    .pb-btns{flex-direction:column}
+    .pbtn{border-radius:0}
+    .pbtn + .pbtn{border-left:1.5px solid var(--ink); border-top:none}
+    .pbtn:first-child{border-radius:2px 2px 0 0}
+    .pbtn:last-child{border-radius:0 0 2px 2px}
   }
 
   /* ---------- hero (inverted, navy) ---------- */
@@ -316,19 +340,6 @@
   details.deeper[open]>summary::before{content:"–"}
   details.deeper>summary:hover{color:var(--ink)}
 
-  /* ---------- sticky belief strip ---------- */
-  .stickybar{
-    position:fixed; left:0; right:0; bottom:0; z-index:6;
-    background:var(--panel); border-top:1.5px solid var(--line);
-    box-shadow:0 -6px 18px rgba(20,31,56,.10);
-    padding:8px 16px; font-size:12px; color:var(--slate);
-    display:flex; gap:6px 16px; align-items:center; justify-content:center; flex-wrap:wrap;
-    transform:translateY(110%); transition:transform .25s ease;
-  }
-  .stickybar.on{transform:none}
-  .stickybar b{color:var(--ink); font-weight:700}
-  .stickybar a{color:var(--blue); text-decoration:none; font-weight:700; white-space:nowrap}
-  @media (prefers-reduced-motion: reduce){.stickybar{transition:none}}
 
   /* ---------- footer (navy bookend) ---------- */
   footer{background:var(--ink); color:var(--hero-body); margin-top:64px; padding:46px 0 70px; position:relative; overflow:hidden}
@@ -357,8 +368,8 @@
 
   /* ---------- print: board-annex mode ---------- */
   @media print{
-    .rail, .stickybar, .btnrow, button, .card .edit, .gatebox,
-    .ledgerhead, .ledger, .tip{display:none !important}
+    .rail, .btnrow, button, .card .edit, .gatebox,
+    .ledgerhead, .ledger, .tip, .presetbar{display:none !important}
     .reveal{opacity:1 !important; transform:none !important}
     header{padding:36px 0 70px}
     .overlap{margin-top:-46px}
@@ -470,12 +481,17 @@
       </div>
     </div>
     <div class="crqnote"><span class="lead">In CRQ terms</span>This is <b>Fermi decomposition</b> plus an <b>assumption register</b>. Note the quality gradient, which is itself method: one input is barely an estimate (corpus data is a database query), one has internal test evidence, one is external expert elicitation, one is honest near-ignorance with the widest interval. A 90% interval is a tested claim, not a feeling: calibration training, a half-day exercise, brings experts to the point where their 90% intervals really do contain the truth about 90% of the time.</div>
-    <p class="note" style="margin-top:10px">Every input is editable. Change anything and every number downstream is rebuilt from your beliefs. <button class="ghost" id="btn-reset" style="padding:3px 10px; font-size:13px">Reset defaults</button></p>
-    <div class="btnrow presetrow" style="margin-top:4px">
-      <button class="ghost" id="pre-skep" style="padding:5px 12px; font-size:13px">Quantum skeptic</button>
-      <button class="ghost" id="pre-cons" style="padding:5px 12px; font-size:13px">Consensus</button>
-      <button class="ghost" id="pre-hawk" style="padding:5px 12px; font-size:13px">Quantum hawk</button>
-      <span class="note">Presets load a coherent belief set and immediately re-run the Act 5 comparison, so you can test whether the decision survives your worldview.</span>
+    <div class="presetbar">
+      <div class="pb-head">
+        <span class="subhead" style="margin:0">Try a worldview</span>
+        <button class="pb-reset" id="btn-reset">Reset defaults</button>
+      </div>
+      <div class="pb-btns">
+        <button class="pbtn" id="pre-skep">Quantum skeptic</button>
+        <button class="pbtn" id="pre-cons">Consensus</button>
+        <button class="pbtn" id="pre-hawk">Quantum hawk</button>
+      </div>
+      <div class="note">Every input above is editable, and any edit rebuilds every number downstream from your beliefs. Presets load a coherent belief set and re-run the Act 5 comparison immediately; the test is whether the decision survives your worldview.</div>
     </div>
   </div>
 </section>
@@ -701,12 +717,6 @@
   </div>
 </section>
 
-<div class="stickybar" id="stickybar" aria-hidden="true">
-  <span id="sb-text"></span>
-  <a href="#act1">Edit beliefs ↑</a>
-  <button class="ghost" id="btn-share" style="padding:3px 12px; font-size:12px">Copy link</button>
-</div>
-
 <footer>
   <div class="wrap">
     <div class="chipf">The method you just performed</div>
@@ -873,16 +883,12 @@ function applyURL(){
   try{
     const p=new URLSearchParams(location.search);
     URLKEYS.forEach(([k,id])=>{ if(p.has(k)) $(id).value=p.get(k); });
+    /* sanitise appetite fields: stale or hand-edited links can carry nonsense */
+    let ab=+$("ap-beats").value; if(!(ab>=50&&ab<=100)) $("ap-beats").value=95;
+    let ap=+$("ap-p95").value; if(!(ap>=0.05&&ap<=50)) $("ap-p95").value=1;
     if(p.get("rs")==="1") moneyMode=true;
   }catch(e){}
 }
-$("btn-share").addEventListener("click",async()=>{
-  syncURL();
-  const url=location.href, b=$("btn-share"), old=b.textContent;
-  try{ await navigator.clipboard.writeText(url); b.textContent="Copied ✓"; }
-  catch(e){ window.prompt("Copy this link:", url); b.textContent=old; return; }
-  setTimeout(()=>{ b.textContent=old; },1600);
-});
 
 /* ---------- input editing ---------- */
 function readInputs(){
@@ -910,11 +916,13 @@ function readInputs(){
   if(chi<=clo) chi=clo*2, $("in-chi").value=chi;
   $("in-clo").value=clo;
   model.cLo=clo; model.cHi=chi; costS = lognCI(clo,chi);
-  updateSticky();
   invalidate();
   syncURL();
 }
-["in-qmin","in-qmode","in-qmax","in-mmin","in-mmode","in-mmax","in-lmin","in-lmode","in-lmax","in-hlo","in-hhi","in-clo","in-chi"].forEach(id=>$(id).addEventListener("change",readInputs));
+function markPreset(id){
+  try{ document.querySelectorAll(".pbtn").forEach(b=>b.classList.toggle("active", b.id===id)); }catch(e){}
+}
+["in-qmin","in-qmode","in-qmax","in-mmin","in-mmode","in-mmax","in-lmin","in-lmode","in-lmax","in-hlo","in-hhi","in-clo","in-chi"].forEach(id=>$(id).addEventListener("change",()=>{ markPreset(null); readInputs(); }));
 function setInputs(v){
   $("in-qmin").value=v[0]; $("in-qmode").value=v[1]; $("in-qmax").value=v[2];
   $("in-mmin").value=v[3]; $("in-mmode").value=v[4]; $("in-mmax").value=v[5];
@@ -927,10 +935,10 @@ const PRESETS = {
   skep:[2035,2046,2065, 2,4,8, 8,15,25, 500,10000],
   hawk:[2028,2033,2042, 3,5,10, 10,20,30, 3000,80000],
 };
-$("btn-reset").addEventListener("click",()=>setInputs(PRESETS.cons));
-$("pre-cons").addEventListener("click",()=>{ setInputs(PRESETS.cons); doCompare(); });
-$("pre-skep").addEventListener("click",()=>{ setInputs(PRESETS.skep); doCompare(); });
-$("pre-hawk").addEventListener("click",()=>{ setInputs(PRESETS.hawk); doCompare(); });
+$("btn-reset").addEventListener("click",()=>{ setInputs(PRESETS.cons); markPreset("pre-cons"); });
+$("pre-cons").addEventListener("click",()=>{ setInputs(PRESETS.cons); markPreset("pre-cons"); doCompare(); });
+$("pre-skep").addEventListener("click",()=>{ setInputs(PRESETS.skep); markPreset("pre-skep"); doCompare(); });
+$("pre-hawk").addEventListener("click",()=>{ setInputs(PRESETS.hawk); markPreset("pre-hawk"); doCompare(); });
 
 function invalidate(){
   bowl.draws=[]; renderBowl(); $("drawcount").textContent="0 chits drawn (beliefs changed, bowl refilled)";
@@ -951,26 +959,6 @@ function setMoney(on){
   syncURL();
 }
 document.querySelectorAll(".moneycheck").forEach(c=>c.addEventListener("change",e=>setMoney(e.target.checked)));
-
-/* ---------- sticky belief strip ---------- */
-function updateSticky(){
-  $("sb-text").innerHTML =
-    `Current beliefs: <b>Q-Day</b> ${$("in-qmin").value}/${$("in-qmode").value}/${$("in-qmax").value}` +
-    ` · <b>migrate</b> ${$("in-mmin").value}/${$("in-mmode").value}/${$("in-mmax").value} y` +
-    ` · <b>secrecy</b> ${$("in-lmin").value}/${$("in-lmode").value}/${$("in-lmax").value} y` +
-    ` · <b>harvest</b> ${(+$("in-hlo").value).toLocaleString("en-IN")} to ${(+$("in-hhi").value).toLocaleString("en-IN")}/yr`;
-}
-(function(){
-  const bar=$("stickybar");
-  function onScroll(){
-    const a1=$("act1");
-    const past = a1 && (window.scrollY > a1.offsetTop + a1.offsetHeight - 80);
-    bar.classList.toggle("on", !!past);
-    bar.setAttribute("aria-hidden", past? "false":"true");
-  }
-  window.addEventListener("scroll", onScroll, {passive:true});
-  onScroll();
-})();
 
 /* ---------- ACT 2 : the Q-Day bowl ---------- */
 const bowl = { draws: [] };
@@ -1416,6 +1404,7 @@ function renderCmp(){
 /* ---------- init ---------- */
 applyURL();                /* a shared link restores the full configuration */
 readInputs();              /* validates, syncs model, sticky strip, and URL */
+try{ if(!location.search) markPreset("pre-cons"); }catch(e){}
 ledgerClear("The clerk is ready. Play a future above.");
 $("drawcount").textContent="0 chits drawn";
 if(moneyMode){ const m=moneyMode; moneyMode=false; setMoney(m); }
